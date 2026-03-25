@@ -1,0 +1,238 @@
+.manage-container {
+  min-height: 100vh;
+  background: #0f0f23;
+}
+
+.manage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.manage-header .header-left h1 {
+  font-size: 24px;
+  color: #fff;
+  margin: 0;
+}
+
+.manage-header .header-right {
+  display: flex;
+  gap: 12px;
+}
+
+.back-btn {
+  padding: 8px 16px;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.back-btn:hover {
+  background: rgba(102, 126, 234, 0.2);
+}
+
+.manage-header .logout-btn {
+  padding: 8px 16px;
+  background: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.manage-header .logout-btn:hover {
+  background: rgba(255, 77, 79, 0.2);
+}
+
+.manage-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 40px;
+}
+
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.search-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+.search-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.table-container {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.user-table th {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 16px;
+  text-align: left;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.user-table td {
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 14px;
+  color: #fff;
+}
+
+.user-table tr:last-child td {
+  border-bottom: none;
+}
+
+.user-table tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.table-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.role-badge.admin {
+  background: rgba(250, 84, 28, 0.15);
+  color: #fa541c;
+}
+
+.role-badge.user {
+  background: rgba(24, 144, 255, 0.15);
+  color: #1890ff;
+}
+
+.delete-btn {
+  padding: 6px 14px;
+  background: rgba(255, 77, 79, 0.1);
+  color: #ff4d4f;
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s;
+}
+
+.delete-btn:hover {
+  background: rgba(255, 77, 79, 0.2);
+}
+
+.loading-cell,
+.empty-cell {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 40px !important;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.total-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.pagination-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.pagination-buttons button {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.3s;
+}
+
+.pagination-buttons button:hover:not(:disabled) {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.pagination-buttons button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination select {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.pagination select:focus {
+  outline: none;
+  border-color: #667eea;
+}
