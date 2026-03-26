@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { userLoginUsingPost } from "@/api/userController";
+import { userLoginUsingPost, getLoginUserUsingGet } from "@/api/userController";
 import { useUser } from "@/contexts/UserContext";
 import "./LoginPage.css";
 
@@ -30,14 +30,26 @@ export default function LoginPage() {
     setError("");
     try {
       const res = await userLoginUsingPost({ userAccount, userPassword });
+      // @ts-ignore
       if (res.code === 0) {
+        // @ts-ignore
         setLoginUser(res.data);
+        
+        // 登录成功后调用一次获取用户信息，确保后端session正确初始化
+        try {
+          await getLoginUserUsingGet();
+        } catch (e) {
+          console.error("获取登录用户信息失败", e);
+        }
+        
+        // @ts-ignore
         if (res.data?.userRole === "admin") {
           navigate("/user-manage");
         } else {
           navigate("/home");
         }
       } else {
+        // @ts-ignore
         setError(res.message || "登录失败");
       }
     } catch (err: any) {

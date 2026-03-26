@@ -3,6 +3,9 @@ import LoginPage from "@/pages/LoginPage";
 import RegisterPage from "@/pages/RegisterPage";
 import HomePage from "@/pages/HomePage";
 import UserManagePage from "@/pages/UserManagePage";
+import AdminDashboard from "@/pages/AdminDashboard";
+import PictureManagePage from "@/pages/PictureManagePage";
+import PictureReviewPage from "@/pages/PictureReviewPage";
 import AuthGuard from "@/components/AuthGuard";
 
 const router = createBrowserRouter([
@@ -23,10 +26,34 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/admin",
+    element: (
+      <AuthGuard requireAdmin>
+        <AdminDashboard />
+      </AuthGuard>
+    ),
+  },
+  {
     path: "/user-manage",
     element: (
       <AuthGuard requireAdmin>
         <UserManagePage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/manage/picture",
+    element: (
+      <AuthGuard requireAdmin>
+        <PictureManagePage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/manage/picture-review",
+    element: (
+      <AuthGuard requireAdmin>
+        <PictureReviewPage />
       </AuthGuard>
     ),
   },

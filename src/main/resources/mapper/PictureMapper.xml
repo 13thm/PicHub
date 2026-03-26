@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thm.pichub.mapper.PictureMapper">
+
+    <resultMap id="BaseResultMap" type="com.thm.pichub.model.entity.Picture">
+        <id column="id" property="id" />
+        <result column="url" property="url" />
+        <result column="thumbnailUrl" property="thumbnailUrl" />
+        <result column="name" property="name" />
+        <result column="introduction" property="introduction" />
+        <result column="category" property="category" />
+        <result column="tags" property="tags" />
+        <result column="picSize" property="picSize" />
+        <result column="picWidth" property="picWidth" />
+        <result column="picHeight" property="picHeight" />
+        <result column="picScale" property="picScale" />
+        <result column="picFormat" property="picFormat" />
+        <result column="reviewStatus" property="reviewStatus" />
+        <result column="reviewMessage" property="reviewMessage" />
+        <result column="reviewerId" property="reviewerId" />
+        <result column="reviewTime" property="reviewTime" />
+        <result column="userId" property="userId" />
+        <result column="createTime" property="createTime" />
+        <result column="editTime" property="editTime" />
+        <result column="updateTime" property="updateTime" />
+        <result column="isDelete" property="isDelete" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,url,thumbnailUrl,name,introduction,category,tags,picSize,picWidth,picHeight,
+        picScale,picFormat,reviewStatus,reviewMessage,reviewerId,reviewTime,userId,
+        createTime,editTime,updateTime,isDelete
+    </sql>
+</mapper>

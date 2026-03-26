@@ -17,6 +17,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponsePagePictureVO_ = {
+    code?: number;
+    data?: PagePictureVO_;
+    message?: string;
+  };
+
   type BaseResponsePageUserVO_ = {
     code?: number;
     data?: PageUserVO_;
@@ -37,6 +43,11 @@ declare namespace API {
 
   type DeleteRequest = {
     id?: number;
+  };
+
+  type downloadPictureUsingGETParams = {
+    /** pictureId */
+    pictureId: number;
   };
 
   type getUserByIdUsingGETParams = {
@@ -64,6 +75,19 @@ declare namespace API {
     column?: string;
   };
 
+  type PagePictureVO_ = {
+    countId?: string;
+    current?: number;
+    maxLimit?: number;
+    optimizeCountSql?: boolean;
+    orders?: OrderItem[];
+    pages?: number;
+    records?: PictureVO[];
+    searchCount?: boolean;
+    size?: number;
+    total?: number;
+  };
+
   type PageUserVO_ = {
     countId?: string;
     current?: number;
@@ -75,6 +99,60 @@ declare namespace API {
     searchCount?: boolean;
     size?: number;
     total?: number;
+  };
+
+  type PictureQueryRequest = {
+    category?: string;
+    current?: number;
+    name?: string;
+    pageSize?: number;
+    reviewStatus?: number;
+    searchField?: string;
+    sortField?: string;
+    sortOrder?: string;
+    tags?: string;
+    userId?: number;
+  };
+
+  type PictureUpdateRequest = {
+    category?: string;
+    id?: number;
+    introduction?: string;
+    name?: string;
+    reviewMessage?: string;
+    reviewStatus?: number;
+    tags?: string;
+  };
+
+  type PictureVO = {
+    category?: string;
+    createTime?: string;
+    id?: number;
+    introduction?: string;
+    name?: string;
+    picFormat?: string;
+    reviewStatus?: number;
+    tags?: string;
+    thumbnailUrl?: string;
+    url?: string;
+    userId?: number;
+  };
+
+  type ReviewPictureRequest = {
+    id?: number;
+    reviewMessage?: string;
+    reviewStatus?: number;
+  };
+
+  type uploadPictureUsingPOSTParams = {
+    /** category */
+    category?: string;
+    /** introduction */
+    introduction?: string;
+    /** name */
+    name: string;
+    /** tags */
+    tags?: string;
   };
 
   type User = {
@@ -118,10 +196,17 @@ declare namespace API {
     userPassword?: string;
   };
 
+  type UserUpdatePasswordRequest = {
+    confirmPassword?: string;
+    newPassword?: string;
+    oldPassword?: string;
+  };
+
   type UserUpdateRequest = {
     id?: number;
     userAvatar?: string;
     userName?: string;
+    userPassword?: string;
     userProfile?: string;
     userRole?: string;
   };

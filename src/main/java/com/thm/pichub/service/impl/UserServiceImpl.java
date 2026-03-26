@@ -176,7 +176,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             queryWrapper.and(q -> q.like("userAccount", searchText).or().like("userName", searchText));
         }
         queryWrapper.eq("isDelete", 0);
-        queryWrapper.orderBy(StrUtil.isNotEmpty(sortField), sortOrder.equals("ascend"), sortField);
+        queryWrapper.orderBy(StrUtil.isNotEmpty(sortField),  StrUtil.equals(sortOrder, "ascend"), sortField);
         return queryWrapper;
     }
 

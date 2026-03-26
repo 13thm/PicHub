@@ -1,11 +1,67 @@
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { userLogoutUsingPost } from "@/api/userController";
+import { listPictureVoByPageUsingPost, uploadPictureUsingPost } from "@/api/pictureController";
 import { useUser } from "@/contexts/UserContext";
 import "./HomePage.css";
+
+interface PictureVO {
+  id?: number;
+  name?: string;
+  url?: string;
+  thumbnailUrl?: string;
+  category?: string;
+  tags?: string;
+  introduction?: string;
+  picFormat?: string;
+  reviewStatus?: number;
+  userId?: number;
+  createTime?: string;
+}
 
 export default function HomePage() {
   const navigate = useNavigate();
   const { loginUser, setLoginUser } = useUser();
+  const [pictures, setPictures] = useState<PictureVO[]>([]);
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [category, setCategory] = useState("");
+  const [selectedPicture, setSelectedPicture] = useState<PictureVO | null>(null);
+  const [uploadModalVisible, setUploadModalVisible] = useState(false);
+  const [uploadData, setUploadData] = useState({ name: "", category: "", tags: "", introduction: "" });
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const fetchPictures = async () => {
+    setLoading(true);
+    try {
+      const res = await listPictureVoByPageUsingPost({
+        current,
+        pageSize,
+        searchField: searchText || undefined,
+        category: category || undefined,
+        reviewStatus: 1,
+      });
+      // @ts-ignore
+      if (res.code === 0 && res.data?.records) {
+        // @ts-ignore
+        setPictures(res.data.records);
+        // @ts-ignore
+        setTotal(res.data.total || 0);
+      }
+    } catch (error) {
+      console.error("获取图片列表失败", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPictures();
+  }, [current, pageSize, searchText, category]);
 
   const handleLogout = async () => {
     try {
@@ -20,6 +76,74 @@ export default function HomePage() {
   const handleGoToAdmin = () => {
     navigate("/user-manage");
   };
+
+  const handleSearch = () => {
+    setCurrent(1);
+  };
+
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setPageSize(Number(e.target.value));
+    setCurrent(1);
+  };
+
+  const handleDownload = (picture: PictureVO) => {
+    if (!picture.url) return;
+    const link = document.createElement('a');
+    link.href = picture.url;
+    link.target = '_blank';
+    link.download = `${picture.name || 'image'}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleUpload = async () => {
+    if (!uploadFile || !uploadData.name) {
+      alert("请选择图片并填写名称");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await uploadPictureUsingPost(
+        { name: uploadData.name, category: uploadData.category || undefined, tags: uploadData.tags || undefined, introduction: uploadData.introduction || undefined },
+        {},
+        uploadFile
+      );
+      // @ts-ignore
+      if (res.code === 0) {
+        alert("上传成功，请等待审核");
+        setUploadModalVisible(false);
+        setUploadData({ name: "", category: "", tags: "", introduction: "" });
+        setUploadFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        fetchPictures();
+      } else {
+        // @ts-ignore
+        alert(res.message || "上传失败");
+      }
+    } catch (error) {
+      console.error("上传图片失败", error);
+      alert("上传失败");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("请选择图片文件");
+        return;
+      }
+      setUploadFile(file);
+      if (!uploadData.name) {
+        setUploadData({ ...uploadData, name: file.name.replace(/\.[^/.]+$/, "") });
+      }
+    }
+  };
+
+  const totalPages = Math.ceil(total / pageSize);
 
   return (
     <div className="home-container">
@@ -41,6 +165,9 @@ export default function HomePage() {
               管理后台
             </button>
           )}
+          <button onClick={() => setUploadModalVisible(true)} className="upload-btn">
+            上传图片
+          </button>
           <button onClick={handleLogout} className="logout-btn">
             退出登录
           </button>
@@ -48,83 +175,149 @@ export default function HomePage() {
       </header>
 
       <main className="home-main">
-        <div className="welcome-section">
-          <h2>欢迎回来，{loginUser?.userName || loginUser?.userAccount || "用户"}</h2>
-          <p>管理您的图片收藏</p>
-        </div>
-
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                <circle cx="8.5" cy="8.5" r="1.5"/>
-                <polyline points="21 15 16 10 5 21"/>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <span className="stat-number">0</span>
-              <span className="stat-label">图片总数</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <span className="stat-number">0</span>
-              <span className="stat-label">收藏数量</span>
-            </div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <span className="stat-number">0</span>
-              <span className="stat-label">相册数量</span>
-            </div>
+        <div className="search-section">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="搜索图片名称..."
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            />
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option value="">全部分类</option>
+              <option value="wallpaper">壁纸</option>
+              <option value="avatar">头像</option>
+              <option value="photo">照片</option>
+              <option value="other">其他</option>
+            </select>
+            <button onClick={handleSearch} className="search-btn">搜索</button>
           </div>
         </div>
 
-        <div className="action-grid">
-          <div className="action-card">
-            <div className="action-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                <polyline points="17 8 12 3 7 8"/>
-                <line x1="12" y1="3" x2="12" y2="15"/>
-              </svg>
+        <div className="picture-gallery">
+          {loading ? (
+            <div className="loading-state">加载中...</div>
+          ) : pictures.length === 0 ? (
+            <div className="empty-state">暂无图片</div>
+          ) : (
+            <div className="picture-grid">
+              {pictures.map((picture) => (
+                <div key={picture.id} className="picture-card" onClick={() => setSelectedPicture(picture)}>
+                  <div className="picture-image">
+                    <img src={picture.thumbnailUrl || picture.url} alt={picture.name} />
+                    <div className="picture-overlay">
+                      <button className="view-btn" onClick={(e) => { e.stopPropagation(); setSelectedPicture(picture); }}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                          <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        查看详情
+                      </button>
+                      <button className="download-btn" onClick={(e) => { e.stopPropagation(); handleDownload(picture); }}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7 10 12 15 17 10"/>
+                          <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        下载
+                      </button>
+                    </div>
+                  </div>
+                  <div className="picture-info">
+                    <h3 className="picture-name">{picture.name}</h3>
+                    <p className="picture-category">{picture.category || "未分类"}</p>
+                    {picture.tags && (
+                      <div className="picture-tags">
+                        {picture.tags.split(",").slice(0, 2).map((tag, index) => (
+                          <span key={index} className="tag">{tag.trim()}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-            <h3>上传图片</h3>
-            <p>上传新图片到您的收藏</p>
-          </div>
-          <div className="action-card">
-            <div className="action-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-              </svg>
-            </div>
-            <h3>浏览图片</h3>
-            <p>浏览和管理您的图片</p>
-          </div>
-          <div className="action-card">
-            <div className="action-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
-                <line x1="7" y1="7" x2="7.01" y2="7"/>
-              </svg>
-            </div>
-            <h3>标签管理</h3>
-            <p>整理和分类您的图片</p>
-          </div>
+          )}
         </div>
+
+        {total > 0 && (
+          <div className="pagination">
+            <span className="total-text">共 {total} 张图片，第 {current}/{totalPages || 1} 页</span>
+            <div className="pagination-buttons">
+              <button disabled={current === 1} onClick={() => setCurrent(1)}>首页</button>
+              <button disabled={current === 1} onClick={() => setCurrent(current - 1)}>上一页</button>
+              <button disabled={current >= totalPages} onClick={() => setCurrent(current + 1)}>下一页</button>
+              <button disabled={current >= totalPages} onClick={() => setCurrent(totalPages)}>末页</button>
+            </div>
+            <select value={pageSize} onChange={handlePageSizeChange}>
+              <option value={20}>20条/页</option>
+              <option value={40}>40条/页</option>
+              <option value={60}>60条/页</option>
+            </select>
+          </div>
+        )}
       </main>
+
+      {selectedPicture && (
+        <div className="detail-modal" onClick={() => setSelectedPicture(null)}>
+          <div className="detail-content" onClick={(e) => e.stopPropagation()}>
+            <img src={selectedPicture.url || selectedPicture.thumbnailUrl} alt={selectedPicture.name} className="detail-image" />
+            <div className="detail-info">
+              <h2>{selectedPicture.name}</h2>
+              <div className="detail-meta">
+                <span className="meta-item">分类: {selectedPicture.category || "未分类"}</span>
+                <span className="meta-item">标签: {selectedPicture.tags || "无"}</span>
+                <span className="meta-item">上传时间: {selectedPicture.createTime || "未知"}</span>
+              </div>
+              <p className="detail-intro">{selectedPicture.introduction || "暂无简介"}</p>
+              <div className="detail-actions">
+                <button className="download-btn" onClick={() => handleDownload(selectedPicture)}>下载图片</button>
+                <button className="close-btn" onClick={() => setSelectedPicture(null)}>关闭</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {uploadModalVisible && (
+        <div className="modal-overlay" onClick={() => setUploadModalVisible(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>上传图片</h2>
+            <div className="form-group">
+              <label>选择图片</label>
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} />
+              {uploadFile && <div className="file-preview">{uploadFile.name}</div>}
+            </div>
+            <div className="form-group">
+              <label>图片名称 *</label>
+              <input type="text" value={uploadData.name} onChange={(e) => setUploadData({ ...uploadData, name: e.target.value })} placeholder="请输入图片名称" />
+            </div>
+            <div className="form-group">
+              <label>分类</label>
+              <select value={uploadData.category} onChange={(e) => setUploadData({ ...uploadData, category: e.target.value })}>
+                <option value="">请选择分类</option>
+                <option value="wallpaper">壁纸</option>
+                <option value="avatar">头像</option>
+                <option value="photo">照片</option>
+                <option value="other">其他</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>标签</label>
+              <input type="text" value={uploadData.tags} onChange={(e) => setUploadData({ ...uploadData, tags: e.target.value })} placeholder="多个标签用逗号分隔" />
+            </div>
+            <div className="form-group">
+              <label>简介</label>
+              <textarea value={uploadData.introduction} onChange={(e) => setUploadData({ ...uploadData, introduction: e.target.value })} />
+            </div>
+            <div className="modal-actions">
+              <button className="cancel-btn" onClick={() => setUploadModalVisible(false)}>取消</button>
+              <button className="submit-btn" onClick={handleUpload} disabled={loading}>上传</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

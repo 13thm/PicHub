@@ -10,6 +10,12 @@ export default function RegisterPage() {
   const [checkPassword, setCheckPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  const showMessage = (text: string, type: "success" | "error" = "success") => {
+    setMessage({ text, type });
+    setTimeout(() => setMessage(null), 2000);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,10 +35,12 @@ export default function RegisterPage() {
     setError("");
     try {
       const res = await userRegisterUsingPost({ userAccount, userPassword, checkPassword });
+      // @ts-ignore
       if (res.code === 0) {
-        alert("注册成功，请登录");
-        navigate("/login");
+        showMessage("注册成功，请登录");
+        setTimeout(() => navigate("/login"), 2000);
       } else {
+        // @ts-ignore
         setError(res.message || "注册失败");
       }
     } catch (err: any) {
@@ -44,6 +52,11 @@ export default function RegisterPage() {
 
   return (
     <div className="register-container">
+      {message && (
+        <div className={`toast-message ${message.type}`}>
+          {message.text}
+        </div>
+      )}
       <div className="register-box">
         <div className="register-header">
           <h1>注册</h1>

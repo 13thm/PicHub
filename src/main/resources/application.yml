@@ -6,6 +6,16 @@ server:
     session:
       cookie:
         max-age: 2592000
+# MinIO 配置
+minio:
+  # MinIO 服务地址
+  endpoint: http://localhost:9000
+  # 账号
+  accessKey: minioadmin
+  # 密码
+  secretKey: minioadmin123
+  # 默认桶名称（不存在会自动创建）
+  bucketName: pichub-bucket
 spring:
   # Spring Boot 2.7+ 必须加（解决 pathpattern 问题）
   mvc:

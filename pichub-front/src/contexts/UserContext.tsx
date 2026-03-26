@@ -96,15 +96,14 @@ export function UserProvider({ children }: { children: ReactNode }) {
    * @param user - 用户信息对象，或 null 表示登出
    */
   const handleSetLoginUser = (user: LoginUserVO | null) => {
-    // 第1步：更新 React 内部状态
-    setLoginUser(user);
-
-    // 第2步：同步到浏览器本地存储
+    // 登录时：更新 React 状态 + 同步 localStorage
     if (user) {
-      // 登录：序列化为字符串存储
+      setLoginUser(user);
       localStorage.setItem("loginUser", JSON.stringify(user));
     } else {
-      // 登出：清除存储
+      // 登出时：只清除 React 状态，不删除 localStorage（保留历史记录）
+      setLoginUser(null);
+      localStorage.setItem("lastLogoutUser", localStorage.getItem("loginUser") || "");
       localStorage.removeItem("loginUser");
     }
   };
