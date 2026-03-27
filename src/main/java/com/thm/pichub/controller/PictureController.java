@@ -6,10 +6,9 @@ import com.thm.pichub.common.DeleteRequest;
 import com.thm.pichub.common.ResultUtils;
 import com.thm.pichub.common.exception.BusinessException;
 import com.thm.pichub.common.exception.ErrorCode;
-import com.thm.pichub.model.dto.picture.PictureQueryRequest;
-import com.thm.pichub.model.dto.picture.PictureUpdateRequest;
-import com.thm.pichub.model.dto.picture.ReviewPictureRequest;
-import com.thm.pichub.model.entity.User;
+import com.thm.pichub.common.exception.ThrowUtils;
+import com.thm.pichub.common.utils.upload.PictureUrlUploadService;
+import com.thm.pichub.model.dto.picture.*;
 import com.thm.pichub.model.vo.picture.PictureVO;
 import com.thm.pichub.model.vo.user.LoginUserVO;
 import com.thm.pichub.service.PictureService;
@@ -22,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 /**
  * 图片接口
@@ -36,6 +36,9 @@ public class PictureController {
     @Resource
     private UserService userService;
 
+    @Resource
+    private PictureUrlUploadService urlUploadService;
+
     /**
      * 上传图片
      */
@@ -49,6 +52,20 @@ public class PictureController {
             HttpServletRequest request) {
         Long pictureId = pictureService.uploadPicture(file, name, introduction, category, tags, request);
         return ResultUtils.success(pictureId);
+    }
+
+
+    @PostMapping("/uploadByUrl")
+    public BaseResponse<Long> uploadByUrl(
+            @RequestParam("url") String url,
+            @RequestParam("name") String name,
+            @RequestParam(value = "introduction", required = false) String introduction,
+            @RequestParam(value = "category", required = false) String category,
+            @RequestParam(value = "tags", required = false) String tags,
+            HttpServletRequest request) {
+            Long pictureId = urlUploadService.executeUpload(request, name, introduction, category, tags, url);
+            return ResultUtils.success(pictureId);
+
     }
 
     /**
@@ -130,5 +147,39 @@ public class PictureController {
     public BaseResponse<Page<PictureVO>> listPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
         Page<PictureVO> pictureVOPage = pictureService.listPictureVOByPage(pictureQueryRequest);
         return ResultUtils.success(pictureVOPage);
+    }
+
+    /**
+     * 批量获取必应图片 URL 接口
+     * @return 图片URL列表
+     */
+    @GetMapping("/batch/extract/url")
+    public BaseResponse<List<String>> batchExtractPictureUrl(PictureGetUrl pictureGetUrl) {
+        List<String> seachUrl = pictureService.getSeachUrl(pictureGetUrl.getCount(), pictureGetUrl.getSearchText());
+        return ResultUtils.success(seachUrl);
+    }
+
+    /**
+     * 批量上传图【点确定的时候】
+     */
+    @PostMapping("/upload/batch")
+    public BaseResponse<Integer> uploadPictureByBatch(
+            @RequestBody PictureUploadByBatchRequest pictureUploadByBatchRequest,
+            HttpServletRequest request
+    ) {
+        ThrowUtils.throwIf(pictureUploadByBatchRequest == null, ErrorCode.NO_AUTH_ERROR);
+        if (pictureUploadByBatchRequest == null || pictureUploadByBatchRequest.getUrls() == null
+                || pictureUploadByBatchRequest.getUrls().isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "上传图片列表不能为空");
+        }
+        int successCount = 0;
+        String search = pictureUploadByBatchRequest.getSearch();
+        for (int i = 0; i < pictureUploadByBatchRequest.getUrls().size(); i++) {
+            String url = pictureUploadByBatchRequest.getUrls().get(i);
+            System.out.println(url);
+            urlUploadService.executeUpload(request,search , "bin", search, search, url);
+            successCount++;
+        }
+        return ResultUtils.success(successCount);
     }
 }

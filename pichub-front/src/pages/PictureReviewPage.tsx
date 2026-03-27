@@ -178,6 +178,7 @@ export default function PictureReviewPage() {
       if (res.code === 0) {
         showMessage(reviewStatus === 1 ? "审核通过" : "审核已拒绝");
         setReviewModalVisible(false);
+        setSelectedPicture(null);
         fetchPictures();
       } else {
         // @ts-ignore

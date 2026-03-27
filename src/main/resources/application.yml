@@ -17,6 +17,18 @@ minio:
   # 默认桶名称（不存在会自动创建）
   bucketName: pichub-bucket
 spring:
+  # Redis 配置
+  redis:
+    host: localhost
+    port: 6379
+    password: 123456
+    database: 0
+    timeout: 5000
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
   # Spring Boot 2.7+ 必须加（解决 pathpattern 问题）
   mvc:
     pathmatch:

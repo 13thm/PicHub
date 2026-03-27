@@ -2,6 +2,21 @@
 /* eslint-disable */
 import request from "@/request";
 
+/** batchExtractPictureUrl GET /api/picture/batch/extract/url */
+export async function batchExtractPictureUrlUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.batchExtractPictureUrlUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<string[]>("/api/picture/batch/extract/url", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** deletePicture POST /api/picture/delete */
 export async function deletePictureUsingPost(
   body: API.DeleteRequest,
@@ -116,6 +131,36 @@ export async function uploadPictureUsingPost(
     },
     data: formData,
     requestType: "form",
+    ...(options || {}),
+  });
+}
+
+/** uploadPictureByBatch POST /api/picture/upload/batch */
+export async function uploadPictureByBatchUsingPost(
+  body: API.PictureUploadByBatchRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseInt_>("/api/picture/upload/batch", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** uploadByUrl POST /api/picture/uploadByUrl */
+export async function uploadByUrlUsingPost(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.uploadByUrlUsingPOSTParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseLong_>("/api/picture/uploadByUrl", {
+    method: "POST",
+    params: {
+      ...params,
+    },
     ...(options || {}),
   });
 }

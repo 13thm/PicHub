@@ -33,7 +33,19 @@ export default function HomePage() {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [uploadData, setUploadData] = useState({ name: "", category: "", tags: "", introduction: "" });
   const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [activeNav, setActiveNav] = useState("home");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleNavClick = (nav: string) => {
+    setActiveNav(nav);
+    if (nav === "home") {
+      navigate("/home");
+    } else if (nav === "square") {
+      navigate("/space-square");
+    } else if (nav === "myspace") {
+      navigate("/my-space");
+    }
+  };
 
   const fetchPictures = async () => {
     setLoading(true);
@@ -150,6 +162,26 @@ export default function HomePage() {
       <header className="home-header">
         <div className="header-left">
           <h1>PicHub</h1>
+          <nav className="header-nav">
+            <button 
+              className={`nav-item ${activeNav === "home" ? "active" : ""}`}
+              onClick={() => handleNavClick("home")}
+            >
+              首页
+            </button>
+            <button 
+              className={`nav-item ${activeNav === "square" ? "active" : ""}`}
+              onClick={() => handleNavClick("square")}
+            >
+              空间广场
+            </button>
+            <button 
+              className={`nav-item ${activeNav === "myspace" ? "active" : ""}`}
+              onClick={() => handleNavClick("myspace")}
+            >
+              我的空间
+            </button>
+          </nav>
         </div>
         <div className="header-right">
           <div className="user-info">

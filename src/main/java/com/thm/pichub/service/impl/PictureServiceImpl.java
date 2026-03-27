@@ -1,6 +1,8 @@
 package com.thm.pichub.service.impl;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -10,6 +12,7 @@ import com.thm.pichub.common.constant.UserConstant;
 import com.thm.pichub.common.exception.BusinessException;
 import com.thm.pichub.common.exception.ErrorCode;
 import com.thm.pichub.common.utils.MinioUtil;
+import com.thm.pichub.common.utils.MultiLevelCacheUtil;
 import com.thm.pichub.mapper.PictureMapper;
 import com.thm.pichub.model.dto.picture.PictureQueryRequest;
 import com.thm.pichub.model.dto.picture.PictureUpdateRequest;
@@ -19,12 +22,18 @@ import com.thm.pichub.model.vo.picture.PictureVO;
 import com.thm.pichub.service.PictureService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +49,8 @@ import java.util.stream.Collectors;
 public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> implements PictureService {
 
     private final MinioUtil minioUtil;
-
+    @Resource
+    private MultiLevelCacheUtil multiLevelCacheUtil;
     @Override
     public Long uploadPicture(MultipartFile file, String name, String introduction, String category, String tags, HttpServletRequest request) {
         // 1. 获取当前登录用户
@@ -175,9 +185,13 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 5. 逻辑删除数据库记录
         return this.removeById(pictureId);
     }
+    /**
+     * 分页获取图片封装列表已经弃用
+     */
 
-    @Override
-    public Page<PictureVO> listPictureVOByPage(PictureQueryRequest pictureQueryRequest) {
+    @Deprecated
+//    @Override
+    public Page<PictureVO> listPictureVOByPageDeprecated(PictureQueryRequest pictureQueryRequest) {
         long current = pictureQueryRequest.getCurrent();
         long size = pictureQueryRequest.getPageSize();
         Page<Picture> picturePage = this.page(new Page<>(current, size), this.getQueryWrapper(pictureQueryRequest));
@@ -185,6 +199,27 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         List<PictureVO> pictureVOList = this.getPictureVOList(picturePage.getRecords());
         pictureVOPage.setRecords(pictureVOList);
         return pictureVOPage;
+    }
+
+    /**
+     * 分页获取图片封装列表（带多级缓存）
+     */
+    @Override
+    public Page<PictureVO> listPictureVOByPage(PictureQueryRequest pictureQueryRequest) {
+        // 生成唯一缓存 Key（用查询参数 MD5 加密）
+        String cacheKey = "picture:vo:page:" + SecureUtil.md5(JSONUtil.toJsonStr(pictureQueryRequest));
+
+        // 多级缓存：Caffeine → Redis → DB
+        return (Page<PictureVO>) multiLevelCacheUtil.get(cacheKey, () -> {
+            // 缓存未命中，执行真实逻辑
+            long current = pictureQueryRequest.getCurrent();
+            long size = pictureQueryRequest.getPageSize();
+            Page<Picture> picturePage = this.page(new Page<>(current, size), this.getQueryWrapper(pictureQueryRequest));
+            Page<PictureVO> pictureVOPage = new Page<>(current, size, picturePage.getTotal());
+            List<PictureVO> pictureVOList = this.getPictureVOList(picturePage.getRecords());
+            pictureVOPage.setRecords(pictureVOList);
+            return pictureVOPage;
+        });
     }
 
     @Override
@@ -294,4 +329,50 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         // 5. 执行更新
         return this.update(updateWrapper);
     }
+
+
+    @Override
+    public List<String> getSeachUrl(Integer count, String searchText) {
+        // 最大限制30条
+        if (count > 30) {
+            count = 30;
+        }
+        List<String> urlList = new ArrayList<>();
+        // 拼接必应图片异步接口地址
+        String fetchUrl = String.format("https://cn.bing.com/images/async?q=%s&mmasync=1", searchText);
+        Document document;
+        try {
+            document = Jsoup.connect(fetchUrl).get();
+        } catch (IOException e) {
+            System.err.println("获取页面失败: " + e.getMessage());
+            return urlList;
+        }
+        // 获取图片容器
+        Element div = document.getElementsByClass("dgControl").first();
+        if (div == null) {
+            return urlList;
+        }
+        // 提取图片标签
+        Elements imgElementList = div.select("img.mimg");
+
+        for (Element imgElement : imgElementList) {
+            String fileUrl = imgElement.attr("src");
+            if (fileUrl == null || StrUtil.isBlank(fileUrl)) {
+                continue;
+            }
+
+            // 去掉?后面的参数，获取纯净URL
+            int questionMarkIndex = fileUrl.indexOf("?");
+            if (questionMarkIndex > -1) {
+                fileUrl = fileUrl.substring(0, questionMarkIndex);
+            }
+            urlList.add(fileUrl);
+            // 达到数量停止
+            if (urlList.size() >= count) {
+                break;
+            }
+        }
+        return urlList;
+    }
+
 }

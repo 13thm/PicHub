@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.thm.pichub.model.dto.picture.PictureQueryRequest;
 import com.thm.pichub.model.dto.picture.PictureUpdateRequest;
+import com.thm.pichub.model.dto.picture.PictureUploadByBatchRequest;
 import com.thm.pichub.model.entity.Picture;
 import com.thm.pichub.model.vo.picture.PictureVO;
+import com.thm.pichub.model.vo.user.LoginUserVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,4 +63,8 @@ public interface PictureService extends IService<Picture> {
      * 审核图片
      */
     boolean reviewPicture(Long pictureId, Integer reviewStatus, String reviewMessage, Long reviewerId);
+    /**
+     * 获取图片url
+     */
+    List<String> getSeachUrl(Integer count, String searchText);
 }

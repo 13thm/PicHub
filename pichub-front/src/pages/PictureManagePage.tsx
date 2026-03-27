@@ -4,7 +4,9 @@ import {
   listPictureVoByPageUsingPost, 
   deletePictureUsingPost, 
   updatePictureUsingPost,
-  uploadPictureUsingPost
+  uploadPictureUsingPost,
+  batchExtractPictureUrlUsingGet,
+  uploadPictureByBatchUsingPost
 } from "@/api/pictureController";
 import { userLogoutUsingPost } from "@/api/userController";
 import { useUser } from "@/contexts/UserContext";
@@ -50,6 +52,19 @@ export default function PictureManagePage() {
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [previewPicture, setPreviewPicture] = useState<PictureVO | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [batchModalVisible, setBatchModalVisible] = useState(false);
+  const [batchKeyword, setBatchKeyword] = useState("");
+  const [batchCount, setBatchCount] = useState(10);
+  const [batchUrls, setBatchUrls] = useState<string[]>([]);
+  const [selectedUrls, setSelectedUrls] = useState<Set<number>>(new Set());
+  const [batchLoading, setBatchLoading] = useState(false);
+  const [batchUploadLoading, setBatchUploadLoading] = useState(false);
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
+
+  const handleImageError = (index: number) => {
+    setImageErrors(prev => new Set(prev).add(index));
+  };
 
   const showMessage = (text: string, type: "success" | "error" = "success") => {
     setMessage({ text, type });
@@ -187,6 +202,88 @@ export default function PictureManagePage() {
     } catch (error) {
       console.error("修改图片失败", error);
       showMessage("修改失败", "error");
+    }
+  };
+
+  const handleBatchFetch = async () => {
+    if (!batchKeyword.trim()) {
+      showMessage("请输入关键词", "error");
+      return;
+    }
+    setBatchLoading(true);
+    setBatchUrls([]);
+    setSelectedUrls(new Set());
+    setImageErrors(new Set());
+    try {
+      const res = await batchExtractPictureUrlUsingGet({
+        searchText: batchKeyword,
+        count: batchCount,
+      });
+      console.log("获取到的URL:", res);
+      console.log("获取到的URL:", res);
+      // @ts-ignore
+      if (res.code === 0 && res.data) {
+        setBatchUrls(res.data);
+        showMessage(`成功获取 ${res.data.length} 个URL`);
+      } else {
+        // @ts-ignore
+        showMessage(res.message || "获取URL失败", "error");
+      }
+    } catch (error) {
+      console.error("获取URL失败", error);
+      showMessage("获取URL失败", "error");
+    } finally {
+      setBatchLoading(false);
+    }
+  };
+
+  const handleToggleUrl = (index: number) => {
+    const newSelected = new Set(selectedUrls);
+    if (newSelected.has(index)) {
+      newSelected.delete(index);
+    } else {
+      newSelected.add(index);
+    }
+    setSelectedUrls(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedUrls.size === batchUrls.length) {
+      setSelectedUrls(new Set());
+    } else {
+      setSelectedUrls(new Set(batchUrls.map((_, i) => i)));
+    }
+  };
+
+  const handleBatchUpload = async () => {
+    if (selectedUrls.size === 0) {
+      showMessage("请选择要上传的图片", "error");
+      return;
+    }
+    setBatchUploadLoading(true);
+    try {
+      const selectedUrlsArray = Array.from(selectedUrls).map(index => batchUrls[index]);
+      const res = await uploadPictureByBatchUsingPost({
+        search: batchKeyword,
+        urls: selectedUrlsArray,
+      });
+      // @ts-ignore
+      if (res.code === 0) {
+        showMessage(`成功上传 ${res.data || selectedUrls.size} 张图片`);
+        setBatchModalVisible(false);
+        setBatchUrls([]);
+        setSelectedUrls(new Set());
+        setBatchKeyword("");
+        fetchPictures();
+      } else {
+        // @ts-ignore
+        showMessage(res.message || "上传失败", "error");
+      }
+    } catch (error) {
+      console.error("批量上传失败", error);
+      showMessage("批量上传失败", "error");
+    } finally {
+      setBatchUploadLoading(false);
     }
   };
 
@@ -340,6 +437,9 @@ export default function PictureManagePage() {
           <div className="header-right">
             <button className="upload-btn" onClick={() => setUploadModalVisible(true)}>
               上传图片
+            </button>
+            <button className="batch-upload-btn" onClick={() => setBatchModalVisible(true)}>
+              采集图片
             </button>
             <button onClick={handleBackToUser} className="back-btn">
               返回用户端
@@ -559,6 +659,83 @@ export default function PictureManagePage() {
                 <button className="cancel-btn" onClick={() => setUploadModalVisible(false)}>取消</button>
                 <button className="submit-btn" onClick={handleUpload} disabled={loading}>上传</button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {batchModalVisible && (
+          <div className="modal-overlay" onClick={() => setBatchModalVisible(false)}>
+            <div className="modal-content batch-modal" onClick={(e) => e.stopPropagation()}>
+              <h2>批量采集图片</h2>
+              <div className="form-group">
+                <label>搜索关键词</label>
+                <input
+                  type="text"
+                  value={batchKeyword}
+                  onChange={(e) => setBatchKeyword(e.target.value)}
+                  placeholder="请输入搜索关键词（如：风景、宠物等）"
+                />
+              </div>
+              <div className="form-group">
+                <label>获取数量</label>
+                <select value={batchCount} onChange={(e) => setBatchCount(Number(e.target.value))}>
+                  <option value={5}>5张</option>
+                  <option value={10}>10张</option>
+                  <option value={20}>20张</option>
+                  <option value={30}>30张</option>
+                  <option value={50}>50张</option>
+                </select>
+              </div>
+              <button 
+                className="fetch-btn" 
+                onClick={handleBatchFetch} 
+                disabled={batchLoading || !batchKeyword.trim()}
+              >
+                {batchLoading ? "获取中..." : "获取网络图片"}
+              </button>
+              
+              {batchUrls.length > 0 && (
+                <div className="batch-url-list">
+                  <div className="batch-url-header">
+                    <span>共获取 {batchUrls.length} 个URL，已选择 {selectedUrls.size} 个</span>
+                    <button className="select-all-btn" onClick={handleSelectAll}>
+                      {selectedUrls.size === batchUrls.length ? "取消全选" : "全选"}
+                    </button>
+                  </div>
+                  <div className="batch-url-grid">
+                    {batchUrls.map((url, index) => (
+                      <div 
+                        key={index} 
+                        className={`batch-url-item ${selectedUrls.has(index) ? "selected" : ""} ${imageErrors.has(index) ? "error" : ""}`}
+                        onClick={() => handleToggleUrl(index)}
+                      >
+                        {imageErrors.has(index) ? (
+                          <div className="image-error">无法加载</div>
+                        ) : (
+                          <img 
+                            src={url} 
+                            alt={`${batchKeyword}_${index + 1}`} 
+                            onError={() => handleImageError(index)}
+                          />
+                        )}
+                        <div className="batch-url-check">
+                          {selectedUrls.has(index) ? "✓" : ""}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="modal-actions">
+                    <button className="cancel-btn" onClick={() => setBatchModalVisible(false)}>取消</button>
+                    <button 
+                      className="submit-btn" 
+                      onClick={handleBatchUpload}
+                      disabled={batchUploadLoading || selectedUrls.size === 0}
+                    >
+                      {batchUploadLoading ? "上传中..." : `上传到图库 (${selectedUrls.size})`}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

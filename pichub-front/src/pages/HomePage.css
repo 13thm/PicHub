@@ -16,6 +16,12 @@
   z-index: 100;
 }
 
+.home-header .header-left {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
 .home-header .header-left h1 {
   font-size: 24px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -23,6 +29,32 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin: 0;
+}
+
+.header-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-item {
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.nav-item.active {
+  background: rgba(102, 126, 234, 0.15);
+  color: #667eea;
 }
 
 .home-header .header-right {

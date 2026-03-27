@@ -5,6 +5,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseInt_ = {
+    code?: number;
+    data?: number;
+    message?: string;
+  };
+
   type BaseResponseLoginUserVO_ = {
     code?: number;
     data?: LoginUserVO;
@@ -39,6 +45,11 @@ declare namespace API {
     code?: number;
     data?: UserVO;
     message?: string;
+  };
+
+  type batchExtractPictureUrlUsingGETParams = {
+    count?: number;
+    searchText?: string;
   };
 
   type DeleteRequest = {
@@ -124,6 +135,11 @@ declare namespace API {
     tags?: string;
   };
 
+  type PictureUploadByBatchRequest = {
+    search?: string;
+    urls?: string[];
+  };
+
   type PictureVO = {
     category?: string;
     createTime?: string;
@@ -142,6 +158,19 @@ declare namespace API {
     id?: number;
     reviewMessage?: string;
     reviewStatus?: number;
+  };
+
+  type uploadByUrlUsingPOSTParams = {
+    /** category */
+    category?: string;
+    /** introduction */
+    introduction?: string;
+    /** name */
+    name: string;
+    /** tags */
+    tags?: string;
+    /** url */
+    url: string;
   };
 
   type uploadPictureUsingPOSTParams = {
