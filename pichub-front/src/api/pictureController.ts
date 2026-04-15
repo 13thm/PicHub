@@ -8,13 +8,16 @@ export async function batchExtractPictureUrlUsingGet(
   params: API.batchExtractPictureUrlUsingGETParams,
   options?: { [key: string]: any }
 ) {
-  return request<string[]>("/api/picture/batch/extract/url", {
-    method: "GET",
-    params: {
-      ...params,
-    },
-    ...(options || {}),
-  });
+  return request<API.BaseResponseListString_>(
+    "/api/picture/batch/extract/url",
+    {
+      method: "GET",
+      params: {
+        ...params,
+      },
+      ...(options || {}),
+    }
+  );
 }
 
 /** deletePicture POST /api/picture/delete */
@@ -44,6 +47,24 @@ export async function downloadPictureUsingGet(
     params: { ...queryParams },
     ...(options || {}),
   });
+}
+
+/** listAdminPictureVOByPage POST /api/picture/list/page/admin/vo */
+export async function listAdminPictureVoByPageUsingPost(
+  body: API.PictureQueryRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePagePictureVO_>(
+    "/api/picture/list/page/admin/vo",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: body,
+      ...(options || {}),
+    }
+  );
 }
 
 /** listPictureVOByPage POST /api/picture/list/page/vo */

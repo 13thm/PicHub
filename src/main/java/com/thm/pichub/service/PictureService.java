@@ -41,10 +41,13 @@ public interface PictureService extends IService<Picture> {
     boolean deletePicture(Long pictureId, HttpServletRequest request);
 
     /**
-     * 获取图片列表（分页）
+     * 首页获取图片列表-有缓存（分页）
      */
     Page<PictureVO> listPictureVOByPage(PictureQueryRequest pictureQueryRequest);
-
+    /**
+     * 管理员获取图片列表（分页）
+     */
+    Page<PictureVO> listAdminPictureVOByPage(PictureQueryRequest pictureQueryRequest);
     /**
      * 获取查询条件
      */

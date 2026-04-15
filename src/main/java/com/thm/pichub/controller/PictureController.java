@@ -141,11 +141,20 @@ public class PictureController {
     }
 
     /**
-     * 分页获取图片列表
+     * 用户分页获取图片列表（有缓存）
      */
     @PostMapping("/list/page/vo")
     public BaseResponse<Page<PictureVO>> listPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
         Page<PictureVO> pictureVOPage = pictureService.listPictureVOByPage(pictureQueryRequest);
+        return ResultUtils.success(pictureVOPage);
+    }
+
+    /**
+     * 管理员获取列表（没有缓存）
+     */
+    @PostMapping("/list/page/admin/vo")
+    public BaseResponse<Page<PictureVO>> listAdminPictureVOByPage(@RequestBody PictureQueryRequest pictureQueryRequest) {
+        Page<PictureVO> pictureVOPage = pictureService.listAdminPictureVOByPage(pictureQueryRequest);
         return ResultUtils.success(pictureVOPage);
     }
 

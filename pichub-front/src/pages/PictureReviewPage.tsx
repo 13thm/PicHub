@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  listPictureVoByPageUsingPost, 
+import {
+  listAdminPictureVoByPageUsingPost,
   reviewPictureUsingPost
 } from "@/api/pictureController";
 import { userLogoutUsingPost } from "@/api/userController";
@@ -125,7 +125,7 @@ export default function PictureReviewPage() {
   const fetchPictures = async () => {
     setLoading(true);
     try {
-      const res = await listPictureVoByPageUsingPost({
+      const res = await listAdminPictureVoByPageUsingPost({
         current,
         pageSize,
         searchField: searchText || undefined,

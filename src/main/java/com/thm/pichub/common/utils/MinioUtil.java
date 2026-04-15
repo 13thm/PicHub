@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -20,6 +21,9 @@ public class MinioUtil {
 
     @Value("${minio.bucketName}")
     private String bucketName;
+
+    @Value("${minio.endpoint}")
+    private String endpoint;
 
     // ======================== 桶操作 ========================
 
@@ -138,13 +142,12 @@ public class MinioUtil {
 
     @SneakyThrows
     public String getFileUrl(String fileName) {
-        return minioClient.getPresignedObjectUrl(
-                GetPresignedObjectUrlArgs.builder()
-                        .bucket(bucketName)
-                        .object(fileName)
-                        .method(io.minio.http.Method.GET)
-                        .build()
-        );
+        // 1. 确保 endpoint 不以 '/' 结尾，防止拼接成 //
+        String urlEndpoint = endpoint.endsWith("/") ? endpoint.substring(0, endpoint.length() - 1) : endpoint;
+
+        // 2. 拼接：端点/桶名/文件名
+        // 例如：http://127.0.0.1:9000/pichub-bucket/2023/image.jpg
+        return urlEndpoint + "/" + bucketName + "/" + fileName;
     }
 
     @SneakyThrows

@@ -204,22 +204,28 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     /**
      * 分页获取图片封装列表（带多级缓存）
      */
-    @Override
     public Page<PictureVO> listPictureVOByPage(PictureQueryRequest pictureQueryRequest) {
-        // 生成唯一缓存 Key（用查询参数 MD5 加密）
         String cacheKey = "picture:vo:page:" + SecureUtil.md5(JSONUtil.toJsonStr(pictureQueryRequest));
+        long current = pictureQueryRequest.getCurrent();
+        long size = pictureQueryRequest.getPageSize();
 
-        // 多级缓存：Caffeine → Redis → DB
-        return (Page<PictureVO>) multiLevelCacheUtil.get(cacheKey, () -> {
-            // 缓存未命中，执行真实逻辑
-            long current = pictureQueryRequest.getCurrent();
-            long size = pictureQueryRequest.getPageSize();
-            Page<Picture> picturePage = this.page(new Page<>(current, size), this.getQueryWrapper(pictureQueryRequest));
-            Page<PictureVO> pictureVOPage = new Page<>(current, size, picturePage.getTotal());
-            List<PictureVO> pictureVOList = this.getPictureVOList(picturePage.getRecords());
-            pictureVOPage.setRecords(pictureVOList);
-            return pictureVOPage;
+        // 安全分页缓存
+        return multiLevelCacheUtil.getPageCache(cacheKey, current, size, () -> {
+            Page<Picture> picturePage = this.page(new Page<>(current, size), getQueryWrapper(pictureQueryRequest));
+            Page<PictureVO> voPage = new Page<>(current, size, picturePage.getTotal());
+            voPage.setRecords(getPictureVOList(picturePage.getRecords()));
+            return voPage;
         });
+    }
+
+    /**
+     * 管理员分页获取图片封装列表
+     */
+    public Page<PictureVO> listAdminPictureVOByPage(PictureQueryRequest pictureQueryRequest) {
+        Page<Picture> picturePage = this.page(new Page<>(pictureQueryRequest.getCurrent(), pictureQueryRequest.getPageSize()), getQueryWrapper(pictureQueryRequest));
+        Page<PictureVO> pictureVOPage = new Page<>(picturePage.getCurrent(), picturePage.getSize(), picturePage.getTotal());
+        pictureVOPage.setRecords(getPictureVOList(picturePage.getRecords()));
+        return pictureVOPage;
     }
 
     @Override

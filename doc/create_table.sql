@@ -24,7 +24,7 @@ create table if not exists user
 
 
 
--- 图片表 (包含审核状态和缩略图字段的完整版本)
+-- 图片表 (包含审核状态、缩略图字段、空间ID的完整最终版本)
 CREATE TABLE IF NOT EXISTS picture (
     -- 基础信息
                                        id           BIGINT AUTO_INCREMENT COMMENT 'id' PRIMARY KEY,
@@ -48,8 +48,11 @@ CREATE TABLE IF NOT EXISTS picture (
                                        reviewerId   BIGINT                             NULL COMMENT '审核人 ID',
                                        reviewTime   DATETIME                           NULL COMMENT '审核时间',
 
-    -- 用户与时间
+    -- 用户与空间
                                        userId       BIGINT                             NOT NULL COMMENT '创建用户 id',
+                                       spaceId      BIGINT                             NULL COMMENT '空间 id（为空表示公共空间）',
+
+    -- 时间
                                        createTime   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '创建时间',
                                        editTime     DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT '编辑时间',
                                        updateTime   DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -61,5 +64,50 @@ CREATE TABLE IF NOT EXISTS picture (
                                        INDEX idx_category (category),
                                        INDEX idx_tags (tags),
                                        INDEX idx_userId (userId),
-                                       INDEX idx_reviewStatus (reviewStatus)
+                                       INDEX idx_reviewStatus (reviewStatus),
+                                       INDEX idx_spaceId (spaceId)
 ) COMMENT '图片' COLLATE = utf8mb4_unicode_ci;
+
+
+-- 空间表
+create table if not exists space
+(
+    id         bigint auto_increment comment 'id' primary key,
+    spaceName  varchar(128)                       null comment '空间名称',
+    spaceLevel int      default 0                 null comment '空间级别：0-普通版 1-专业版 2-旗舰版',
+    spaceType  int      default 0                 not null comment '空间类型：0-私有 1-团队',
+    maxSize    bigint   default 0                 null comment '空间图片的最大总大小',
+    maxCount   bigint   default 0                 null comment '空间图片的最大数量',
+    totalSize  bigint   default 0                 null comment '当前空间下图片的总大小',
+    totalCount bigint   default 0                 null comment '当前空间下的图片数量',
+    userId     bigint                             not null comment '创建用户 id',
+    createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    editTime   datetime default CURRENT_TIMESTAMP not null comment '编辑时间',
+    updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete   tinyint  default 0                 not null comment '是否删除',
+    -- 索引
+    index idx_userId (userId),
+    index idx_spaceName (spaceName),
+    index idx_spaceLevel (spaceLevel),
+    index idx_spaceType (spaceType)
+) comment '空间' collate = utf8mb4_unicode_ci;
+
+
+
+
+-- 空间成员表
+create table if not exists space_user
+(
+    id         bigint auto_increment comment 'id' primary key,
+    spaceId    bigint                                 not null comment '空间 id',
+    userId     bigint                                 not null comment '用户 id',
+    spaceRole  varchar(128) default 'viewer'          null comment '空间角色：viewer/editor/admin',
+    createTime datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    -- 索引设计
+    UNIQUE KEY uk_spaceId_userId (spaceId, userId), -- 唯一索引，用户在一个空间中只能有一个角色
+    INDEX idx_spaceId (spaceId),                    -- 提升按空间查询的性能
+    INDEX idx_userId (userId)                       -- 提升按用户查询的性能
+) comment '空间用户关联' collate = utf8mb4_unicode_ci;
+
+

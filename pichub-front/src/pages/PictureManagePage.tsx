@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  listPictureVoByPageUsingPost, 
-  deletePictureUsingPost, 
+import {
+  deletePictureUsingPost,
   updatePictureUsingPost,
   uploadPictureUsingPost,
   batchExtractPictureUrlUsingGet,
-  uploadPictureByBatchUsingPost
+  uploadPictureByBatchUsingPost, listAdminPictureVoByPageUsingPost
 } from "@/api/pictureController";
 import { userLogoutUsingPost } from "@/api/userController";
 import { useUser } from "@/contexts/UserContext";
@@ -142,7 +141,7 @@ export default function PictureManagePage() {
   const fetchPictures = async () => {
     setLoading(true);
     try {
-      const res = await listPictureVoByPageUsingPost({
+      const res = await listAdminPictureVoByPageUsingPost({
         current,
         pageSize,
         searchField: searchText || undefined,
