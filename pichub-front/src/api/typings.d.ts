@@ -35,9 +35,45 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponsePageSpaceUserVO_ = {
+    code?: number;
+    data?: PageSpaceUserVO_;
+    message?: string;
+  };
+
+  type BaseResponsePageSpaceVO_ = {
+    code?: number;
+    data?: PageSpaceVO_;
+    message?: string;
+  };
+
   type BaseResponsePageUserVO_ = {
     code?: number;
     data?: PageUserVO_;
+    message?: string;
+  };
+
+  type BaseResponseSpace_ = {
+    code?: number;
+    data?: Space;
+    message?: string;
+  };
+
+  type BaseResponseSpaceUser_ = {
+    code?: number;
+    data?: SpaceUser;
+    message?: string;
+  };
+
+  type BaseResponseSpaceUserVO_ = {
+    code?: number;
+    data?: SpaceUserVO;
+    message?: string;
+  };
+
+  type BaseResponseSpaceVO_ = {
+    code?: number;
+    data?: SpaceVO;
     message?: string;
   };
 
@@ -65,6 +101,26 @@ declare namespace API {
   type downloadPictureUsingGETParams = {
     /** pictureId */
     pictureId: number;
+  };
+
+  type getSpaceByIdUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type getSpaceUserByIdUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type getSpaceUserVOByIdUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type getSpaceVOByIdUsingGETParams = {
+    /** id */
+    id: number;
   };
 
   type getUserByIdUsingGETParams = {
@@ -100,6 +156,32 @@ declare namespace API {
     orders?: OrderItem[];
     pages?: number;
     records?: PictureVO[];
+    searchCount?: boolean;
+    size?: number;
+    total?: number;
+  };
+
+  type PageSpaceUserVO_ = {
+    countId?: string;
+    current?: number;
+    maxLimit?: number;
+    optimizeCountSql?: boolean;
+    orders?: OrderItem[];
+    pages?: number;
+    records?: SpaceUserVO[];
+    searchCount?: boolean;
+    size?: number;
+    total?: number;
+  };
+
+  type PageSpaceVO_ = {
+    countId?: string;
+    current?: number;
+    maxLimit?: number;
+    optimizeCountSql?: boolean;
+    orders?: OrderItem[];
+    pages?: number;
+    records?: SpaceVO[];
     searchCount?: boolean;
     size?: number;
     total?: number;
@@ -164,6 +246,107 @@ declare namespace API {
     id?: number;
     reviewMessage?: string;
     reviewStatus?: number;
+  };
+
+  type Space = {
+    createTime?: string;
+    editTime?: string;
+    id?: number;
+    isDelete?: number;
+    maxCount?: number;
+    maxSize?: number;
+    spaceLevel?: number;
+    spaceName?: string;
+    spaceType?: number;
+    totalCount?: number;
+    totalSize?: number;
+    updateTime?: string;
+    userId?: number;
+  };
+
+  type SpaceAddRequest = {
+    maxCount?: number;
+    maxSize?: number;
+    spaceLevel?: number;
+    spaceName?: string;
+    spaceType?: number;
+  };
+
+  type SpaceQueryRequest = {
+    current?: number;
+    pageSize?: number;
+    searchText?: string;
+    sortField?: string;
+    sortOrder?: string;
+    spaceLevel?: number;
+    spaceName?: string;
+    spaceType?: number;
+    userId?: number;
+  };
+
+  type SpaceUpdateRequest = {
+    id?: number;
+    maxCount?: number;
+    maxSize?: number;
+    spaceLevel?: number;
+    spaceName?: string;
+    spaceType?: number;
+  };
+
+  type SpaceUser = {
+    createTime?: string;
+    id?: number;
+    spaceId?: number;
+    spaceRole?: string;
+    updateTime?: string;
+    userId?: number;
+  };
+
+  type SpaceUserAddRequest = {
+    spaceId?: number;
+    spaceRole?: string;
+    userId?: number;
+  };
+
+  type SpaceUserQueryRequest = {
+    current?: number;
+    pageSize?: number;
+    sortField?: string;
+    sortOrder?: string;
+    spaceId?: number;
+    spaceRole?: string;
+    userId?: number;
+  };
+
+  type SpaceUserUpdateRequest = {
+    id?: number;
+    spaceId?: number;
+    spaceRole?: string;
+    userId?: number;
+  };
+
+  type SpaceUserVO = {
+    createTime?: string;
+    id?: number;
+    spaceId?: number;
+    spaceRole?: string;
+    userAccount?: string;
+    userId?: number;
+    userName?: string;
+  };
+
+  type SpaceVO = {
+    createTime?: string;
+    editTime?: string;
+    id?: number;
+    maxCount?: number;
+    maxSize?: number;
+    spaceLevel?: number;
+    spaceName?: string;
+    spaceType?: number;
+    totalCount?: number;
+    totalSize?: number;
+    userId?: number;
   };
 
   type uploadByUrlUsingPOSTParams = {

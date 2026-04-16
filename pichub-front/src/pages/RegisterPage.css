@@ -1,17 +1,14 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@import '../styles/theme.css';
 
 .register-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0f0f23;
+  background: var(--bg-secondary);
   position: relative;
   overflow: hidden;
+  padding: 20px;
 }
 
 .register-bg {
@@ -26,14 +23,14 @@
 .register-bg .bg-shape {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.6;
+  filter: blur(100px);
+  opacity: 0.4;
 }
 
 .register-bg .shape-1 {
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-blue-light) 0%, var(--accent-blue) 100%);
   top: -100px;
   right: -100px;
 }
@@ -41,7 +38,7 @@
 .register-bg .shape-2 {
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, var(--accent-blue-light) 0%, var(--success-bg) 100%);
   bottom: -50px;
   left: -50px;
 }
@@ -50,11 +47,10 @@
   position: relative;
   width: 420px;
   padding: 48px 40px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
 }
 
 .register-header {
@@ -65,16 +61,14 @@
 .register-header h1 {
   font-size: 32px;
   font-weight: 700;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
   margin-bottom: 8px;
+  letter-spacing: -0.02em;
 }
 
 .register-header p {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
 }
 
 .register-box .form-group {
@@ -84,7 +78,7 @@
 .register-box .form-group label {
   display: block;
   margin-bottom: 8px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   font-size: 14px;
   font-weight: 500;
 }
@@ -92,53 +86,54 @@
 .register-box .form-group input {
   width: 100%;
   padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  color: #fff;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
   font-size: 15px;
-  transition: all 0.3s;
+  transition: all var(--transition-fast);
 }
 
 .register-box .form-group input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-tertiary);
 }
 
 .register-box .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  border-color: var(--accent-blue);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 3px var(--accent-blue-light);
 }
 
 .register-box .error-msg {
   padding: 12px 16px;
-  background: rgba(255, 77, 79, 0.1);
-  border: 1px solid rgba(255, 77, 79, 0.3);
-  border-radius: 8px;
-  color: #ff4d4f;
+  background: var(--error-bg);
+  border: 1px solid var(--error);
+  border-radius: var(--radius-sm);
+  color: var(--error);
   font-size: 14px;
   text-align: center;
   margin-bottom: 20px;
+  font-weight: 500;
 }
 
 .register-btn {
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-blue);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all var(--transition-normal);
   margin-top: 8px;
 }
 
 .register-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  background: var(--accent-blue-hover);
+  box-shadow: var(--shadow-md);
 }
 
 .register-btn:disabled {
@@ -150,18 +145,20 @@
   margin-top: 24px;
   text-align: center;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
 }
 
 .register-footer a {
-  color: #667eea;
+  color: var(--accent-blue);
   text-decoration: none;
   font-weight: 500;
   margin-left: 6px;
 }
 
 .register-footer a:hover {
-  color: #764ba2;
+  text-decoration: underline;
 }
 
 .toast-message {
@@ -170,21 +167,21 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 14px 28px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   font-size: 14px;
   font-weight: 500;
   z-index: 2000;
-  animation: toastSlide 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .toast-message.success {
-  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success);
+  backdrop-filter: none;
 }
 
 .toast-message.success::before {
@@ -194,24 +191,28 @@
   justify-content: center;
   width: 20px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--success);
+  color: white;
   border-radius: 50%;
   font-size: 12px;
 }
 
 .toast-message.error {
-  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: var(--error-bg);
+  color: var(--error);
+  border: 1px solid var(--error);
+  backdrop-filter: none;
 }
 
-@keyframes toastSlide {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-30px) scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
+.toast-message.error::before {
+  content: "✕";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: var(--error);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
 }

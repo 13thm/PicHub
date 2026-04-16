@@ -149,9 +149,7 @@ export default function PictureManagePage() {
       });
       // @ts-ignore
       if (res.code === 0 && res.data?.records) {
-        // @ts-ignore
         setPictures(res.data.records);
-        // @ts-ignore
         setTotal(res.data.total || 0);
       }
     } catch (error) {
@@ -189,13 +187,13 @@ export default function PictureManagePage() {
         tags: editingPicture.tags,
         introduction: editingPicture.introduction,
       });
-      // @ts-ignore
+      
       if (res.code === 0) {
         showMessage("修改成功");
         setEditModalVisible(false);
         fetchPictures();
       } else {
-        // @ts-ignore
+        
         showMessage(res.message || "修改失败", "error");
       }
     } catch (error) {
@@ -220,12 +218,12 @@ export default function PictureManagePage() {
       });
       console.log("获取到的URL:", res);
       console.log("获取到的URL:", res);
-      // @ts-ignore
+      
       if (res.code === 0 && res.data) {
         setBatchUrls(res.data);
         showMessage(`成功获取 ${res.data.length} 个URL`);
       } else {
-        // @ts-ignore
+        
         showMessage(res.message || "获取URL失败", "error");
       }
     } catch (error) {
@@ -266,7 +264,7 @@ export default function PictureManagePage() {
         search: batchKeyword,
         urls: selectedUrlsArray,
       });
-      // @ts-ignore
+      
       if (res.code === 0) {
         showMessage(`成功上传 ${res.data || selectedUrls.size} 张图片`);
         setBatchModalVisible(false);
@@ -275,7 +273,7 @@ export default function PictureManagePage() {
         setBatchKeyword("");
         fetchPictures();
       } else {
-        // @ts-ignore
+        
         showMessage(res.message || "上传失败", "error");
       }
     } catch (error) {
@@ -290,12 +288,12 @@ export default function PictureManagePage() {
     if (!confirm("确定要删除该图片吗？")) return;
     try {
       const res = await deletePictureUsingPost({ id });
-      // @ts-ignore
+      
       if (res.code === 0) {
         showMessage("删除成功");
         fetchPictures();
       } else {
-        // @ts-ignore
+        
         showMessage(res.message || "删除失败", "error");
       }
     } catch (error) {
@@ -316,7 +314,7 @@ export default function PictureManagePage() {
         {},
         uploadFile
       );
-      // @ts-ignore
+      
       if (res.code === 0) {
         showMessage("上传成功");
         setUploadModalVisible(false);
@@ -325,7 +323,7 @@ export default function PictureManagePage() {
         if (fileInputRef.current) fileInputRef.current.value = "";
         fetchPictures();
       } else {
-        // @ts-ignore
+        
         showMessage(res.message || "上传失败", "error");
       }
     } catch (error) {

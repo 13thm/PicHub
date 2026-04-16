@@ -10,9 +10,10 @@ export default function LoginPage() {
   const [userAccount, setUserAccount] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  if (loginUser) {
+  if (loginUser && !isRedirecting) {
     if (loginUser.userRole === "admin") {
       navigate("/user-manage", { replace: true });
     } else {
@@ -20,40 +21,55 @@ export default function LoginPage() {
     }
   }
 
+  const showMessage = (text: string, type: "success" | "error" = "success") => {
+    setMessage({ text, type });
+    setTimeout(() => setMessage(null), 3000);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!userAccount || !userPassword) {
-      setError("请输入用户名和密码");
+      showMessage("请输入用户名和密码", "error");
       return;
     }
     setLoading(true);
-    setError("");
     try {
       const res = await userLoginUsingPost({ userAccount, userPassword });
       // @ts-ignore
       if (res.code === 0) {
         // @ts-ignore
-        setLoginUser(res.data);
-        
+        const userData = res.data;
+
+        // 先设置重定向标记，阻止立即跳转
+        setIsRedirecting(true);
+
+        // 显示登录成功消息
+        showMessage("登录成功，正在跳转...", "success");
+
+        // 再设置登录用户信息
+        setLoginUser(userData);
+
         // 登录成功后调用一次获取用户信息，确保后端session正确初始化
         try {
           await getLoginUserUsingGet();
         } catch (e) {
           console.error("获取登录用户信息失败", e);
         }
-        
-        // @ts-ignore
-        if (res.data?.userRole === "admin") {
-          navigate("/user-manage");
-        } else {
-          navigate("/home");
-        }
+
+        // 延迟2秒跳转，让用户看到成功消息
+        setTimeout(() => {
+          if (userData?.userRole === "admin") {
+            navigate("/user-manage");
+          } else {
+            navigate("/home");
+          }
+        }, 500);
       } else {
         // @ts-ignore
-        setError(res.message || "登录失败");
+        showMessage(res.message || "登录失败", "error");
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || "请求失败，请检查网络");
+      showMessage(err.response?.data?.message || "登录失败，请检查网络", "error");
     } finally {
       setLoading(false);
     }
@@ -111,7 +127,11 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <div className="error-message">{error}</div>}
+          {message && (
+            <div className={`toast-message ${message.type}`}>
+              {message.text}
+            </div>
+          )}
 
           <button type="submit" className="submit-btn" disabled={loading}>
             {loading ? (

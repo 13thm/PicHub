@@ -6,6 +6,7 @@ import UserManagePage from "@/pages/UserManagePage";
 import AdminDashboard from "@/pages/AdminDashboard";
 import PictureManagePage from "@/pages/PictureManagePage";
 import PictureReviewPage from "@/pages/PictureReviewPage";
+import SpaceManagePage from "@/pages/SpaceManagePage";
 import AuthGuard from "@/components/AuthGuard";
 
 const router = createBrowserRouter([
@@ -54,6 +55,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard requireAdmin>
         <PictureReviewPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/manage/space",
+    element: (
+      <AuthGuard requireAdmin>
+        <SpaceManagePage />
       </AuthGuard>
     ),
   },

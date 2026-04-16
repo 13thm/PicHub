@@ -1,15 +1,11 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@import '../styles/theme.css';
 
 .login-wrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0f0f23;
+  background: var(--bg-secondary);
   position: relative;
   overflow: hidden;
 }
@@ -26,15 +22,15 @@
 .bg-shape {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.6;
+  filter: blur(100px);
+  opacity: 0.4;
   animation: float 20s infinite ease-in-out;
 }
 
 .shape-1 {
   width: 400px;
   height: 400px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--accent-blue-light) 0%, var(--accent-blue) 100%);
   top: -100px;
   left: -100px;
   animation-delay: 0s;
@@ -43,7 +39,7 @@
 .shape-2 {
   width: 300px;
   height: 300px;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, var(--accent-blue-light) 0%, var(--success-bg) 100%);
   bottom: -50px;
   right: -50px;
   animation-delay: -5s;
@@ -52,7 +48,7 @@
 .shape-3 {
   width: 250px;
   height: 250px;
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, var(--info-bg) 0%, var(--accent-blue-light) 100%);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -78,11 +74,10 @@
   position: relative;
   width: 420px;
   padding: 48px 40px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
 }
 
 .login-brand {
@@ -94,11 +89,12 @@
   width: 64px;
   height: 64px;
   margin: 0 auto 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-blue-hover) 100%);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: var(--shadow-md);
 }
 
 .brand-icon svg {
@@ -110,17 +106,14 @@
 .login-brand h1 {
   font-size: 32px;
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin-bottom: 8px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  letter-spacing: -0.02em;
 }
 
 .login-brand p {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
 }
 
 .login-form {
@@ -140,7 +133,7 @@
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-tertiary);
 }
 
 .input-icon svg {
@@ -151,33 +144,53 @@
 .input-group input {
   width: 100%;
   padding: 16px 16px 16px 48px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  color: #fff;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
   font-size: 15px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
 }
 
 .input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-tertiary);
 }
 
 .input-group input:focus {
   outline: none;
-  border-color: #667eea;
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  border-color: var(--accent-blue);
+  background: var(--bg-primary);
+  box-shadow: 0 0 0 3px var(--accent-blue-light);
 }
 
-.error-message {
-  padding: 12px 16px;
-  background: rgba(255, 77, 79, 0.1);
-  border: 1px solid rgba(255, 77, 79, 0.3);
-  border-radius: 8px;
-  color: #ff4d4f;
+.toast-message {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: var(--radius-lg);
   font-size: 14px;
+  font-weight: 500;
+  z-index: 2000;
+  box-shadow: var(--shadow-lg);
+  max-width: 400px;
   text-align: center;
+  white-space: nowrap;
+}
+
+.toast-message.success {
+  background: var(--success-bg);
+  color: var(--success);
+  border: 1px solid var(--success);
+  backdrop-filter: none;
+}
+
+.toast-message.error {
+  background: var(--error-bg);
+  color: var(--error);
+  border: 1px solid var(--error);
+  backdrop-filter: none;
 }
 
 .submit-btn {
@@ -187,14 +200,14 @@
   gap: 8px;
   width: 100%;
   padding: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--accent-blue);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   color: #fff;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
   margin-top: 8px;
 }
 
@@ -204,8 +217,8 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+  background: var(--accent-blue-hover);
+  box-shadow: var(--shadow-md);
 }
 
 .submit-btn:disabled {
@@ -216,7 +229,7 @@
 .loading-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid var(--bg-tertiary);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -232,17 +245,19 @@
   margin-top: 28px;
   text-align: center;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
 }
 
 .register-link {
-  color: #667eea;
+  color: var(--accent-blue);
   text-decoration: none;
   font-weight: 500;
   margin-left: 6px;
-  transition: color 0.3s ease;
+  transition: color var(--transition-fast);
 }
 
 .register-link:hover {
-  color: #764ba2;
+  text-decoration: underline;
 }

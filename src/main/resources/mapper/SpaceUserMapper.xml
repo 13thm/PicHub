@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thm.pichub.mapper.SpaceUserMapper">
+
+    <resultMap id="BaseResultMap" type="com.thm.pichub.model.entity.SpaceUser">
+        <id column="id" property="id" />
+        <result column="spaceId" property="spaceId" />
+        <result column="userId" property="userId" />
+        <result column="spaceRole" property="spaceRole" />
+        <result column="createTime" property="createTime" />
+        <result column="updateTime" property="updateTime" />
+    </resultMap>
+
+    <!-- SpaceUserVO 结果映射 -->
+    <resultMap id="SpaceUserVOResultMap" type="com.thm.pichub.model.vo.SpaceUserVO">
+        <id column="id" property="id" />
+        <result column="spaceId" property="spaceId" />
+        <result column="userId" property="userId" />
+        <result column="spaceRole" property="spaceRole" />
+        <result column="createTime" property="createTime" />
+        <result column="userAccount" property="userAccount" />
+        <result column="userName" property="userName" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,spaceId,userId,spaceRole,createTime,updateTime
+    </sql>
+
+    <!-- 分页查询空间成员VO -->
+    <select id="selectSpaceUserVOPage" resultMap="SpaceUserVOResultMap">
+        SELECT
+            su.id,
+            su.spaceId,
+            su.userId,
+            su.spaceRole,
+            su.createTime,
+            u.userAccount,
+            u.userName
+        FROM
+            space_user su
+        LEFT JOIN user u ON su.userId = u.id
+        <where>
+            u.isDelete = 0
+            <if test="spaceId != null">
+                AND su.spaceId = #{spaceId}
+            </if>
+            <if test="userId != null">
+                AND su.userId = #{userId}
+            </if>
+            <if test="spaceRole != null and spaceRole != ''">
+                AND su.spaceRole = #{spaceRole}
+            </if>
+        </where>
+        <if test="sortField != null and sortField != ''">
+            ORDER BY ${sortField}
+            <if test="sortOrder != null and sortOrder != ''">
+                ${sortOrder}
+            </if>
+        </if>
+    </select>
+
+    <!-- 根据ID查询空间成员VO -->
+    <select id="selectSpaceUserVOById" resultMap="SpaceUserVOResultMap">
+        SELECT
+            su.id,
+            su.spaceId,
+            su.userId,
+            su.spaceRole,
+            su.createTime,
+            u.userAccount,
+            u.userName
+        FROM
+            space_user su
+        LEFT JOIN user u ON su.userId = u.id
+        WHERE
+            su.id = #{id}
+            AND u.isDelete = 0
+    </select>
+
+</mapper>

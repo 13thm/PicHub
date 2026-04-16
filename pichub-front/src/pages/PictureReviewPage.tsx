@@ -308,8 +308,6 @@ export default function PictureReviewPage() {
                         src={picture.thumbnailUrl || picture.url}
                         alt={picture.name}
                         className="table-thumbnail"
-                        onClick={(e) => { e.stopPropagation(); }}
-                        style={{ cursor: 'default' }}
                       />
                     </td>
                     <td>{picture.name}</td>
@@ -405,20 +403,6 @@ export default function PictureReviewPage() {
                 <button className="cancel-btn" onClick={() => setReviewModalVisible(false)}>取消</button>
                 <button className="submit-btn" onClick={handleReviewSubmit}>提交审核</button>
               </div>
-            </div>
-          </div>
-        )}
-
-        {selectedPicture && !reviewModalVisible && (
-          <div className="preview-overlay" onClick={() => setSelectedPicture(null)}>
-            <div className="preview-content" onClick={(e) => e.stopPropagation()}>
-              <img src={selectedPicture.url || selectedPicture.thumbnailUrl} alt={selectedPicture.name} />
-              <div className="preview-info">
-                <h3>{selectedPicture.name}</h3>
-                <p>{selectedPicture.introduction || "暂无简介"}</p>
-                <button className="review-btn" onClick={() => { setSelectedPicture(null); handleReview(selectedPicture); }}>审核</button>
-              </div>
-              <button className="preview-close" onClick={() => setSelectedPicture(null)}>×</button>
             </div>
           </div>
         )}
