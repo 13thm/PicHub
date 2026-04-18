@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.thm.pichub.model.dto.space.*;
 import com.thm.pichub.model.entity.Space;
+import com.thm.pichub.model.vo.MySpaceVO;
 import com.thm.pichub.model.vo.SpaceVO;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,4 +55,9 @@ public interface SpaceService extends IService<Space> {
      * 分页获取空间VO列表
      */
     Page<SpaceVO> listSpaceVOByPage(SpaceQueryRequest spaceQueryRequest, HttpServletRequest request);
+
+    /**
+     * 获取用户加入的空间列表（包含权限信息）
+     */
+    List<MySpaceVO> listMySpaces(HttpServletRequest request);
 }

@@ -49,8 +49,9 @@ public class PictureController {
             @RequestParam(value = "introduction", required = false) String introduction,
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "spaceId", required = false) Long spaceId,
             HttpServletRequest request) {
-        Long pictureId = pictureService.uploadPicture(file, name, introduction, category, tags, request);
+        Long pictureId = pictureService.uploadPicture(file, name, introduction, category, tags, spaceId, request);
         return ResultUtils.success(pictureId);
     }
 
@@ -62,8 +63,9 @@ public class PictureController {
             @RequestParam(value = "introduction", required = false) String introduction,
             @RequestParam(value = "category", required = false) String category,
             @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "spaceId", required = false) Long spaceId,
             HttpServletRequest request) {
-            Long pictureId = urlUploadService.executeUpload(request, name, introduction, category, tags, url);
+            Long pictureId = urlUploadService.executeUpload(request, name, introduction, category, tags, spaceId, url);
             return ResultUtils.success(pictureId);
 
     }
@@ -136,7 +138,7 @@ public class PictureController {
         if (deleteRequest == null || deleteRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean result = pictureService.deletePicture(deleteRequest.getId(), request);
+        boolean result = pictureService.deletePicture(deleteRequest, request);
         return ResultUtils.success(result);
     }
 
@@ -183,10 +185,11 @@ public class PictureController {
         }
         int successCount = 0;
         String search = pictureUploadByBatchRequest.getSearch();
+        Long spaceId = pictureUploadByBatchRequest.getSpaceId();
         for (int i = 0; i < pictureUploadByBatchRequest.getUrls().size(); i++) {
             String url = pictureUploadByBatchRequest.getUrls().get(i);
             System.out.println(url);
-            urlUploadService.executeUpload(request,search , "bin", search, search, url);
+            urlUploadService.executeUpload(request, search, "batch", search, search, spaceId, url);
             successCount++;
         }
         return ResultUtils.success(successCount);

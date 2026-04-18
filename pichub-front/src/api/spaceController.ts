@@ -60,6 +60,14 @@ export async function getSpaceVoByIdUsingGet(
   });
 }
 
+/** listMySpaces GET /api/space/list/my */
+export async function listMySpacesUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseListMySpaceVO_>("/api/space/list/my", {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
 /** listSpaceVOByPage POST /api/space/list/page/vo */
 export async function listSpaceVoByPageUsingPost(
   body: API.SpaceQueryRequest,

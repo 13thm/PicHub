@@ -44,6 +44,11 @@ public class PictureQueryRequest {
     private Long userId;
 
     /**
+     * 空间ID
+     */
+    private Long spaceId;
+
+    /**
      * 审核状态
      */
     private Integer reviewStatus;

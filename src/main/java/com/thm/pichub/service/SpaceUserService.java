@@ -56,7 +56,13 @@ public interface SpaceUserService extends IService<SpaceUser> {
     Page<SpaceUserVO> listSpaceUserVOByPage(SpaceUserQueryRequest spaceUserQueryRequest);
 
     /**
-     * 判断用户是否为空间管理员
+     * 判断用户是否有上传\删除的权限
      */
-    boolean isSpaceAdmin(Long spaceId, Long userId);
+    boolean isSpacePermission(Long spaceId, Long userId);
+
+    /**
+     * 获取权限
+     */
+    String SpacePermission(Long spaceId, Long userId);
+
 }

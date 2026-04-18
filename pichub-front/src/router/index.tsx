@@ -7,6 +7,8 @@ import AdminDashboard from "@/pages/AdminDashboard";
 import PictureManagePage from "@/pages/PictureManagePage";
 import PictureReviewPage from "@/pages/PictureReviewPage";
 import SpaceManagePage from "@/pages/SpaceManagePage";
+import MySpacePage from "@/pages/MySpacePage";
+import SpacePicturesPage from "@/pages/SpacePicturesPage";
 import AuthGuard from "@/components/AuthGuard";
 
 const router = createBrowserRouter([
@@ -63,6 +65,22 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard requireAdmin>
         <SpaceManagePage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/my-space",
+    element: (
+      <AuthGuard>
+        <MySpacePage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/my-space/:spaceId/pictures",
+    element: (
+      <AuthGuard>
+        <SpacePicturesPage />
       </AuthGuard>
     ),
   },

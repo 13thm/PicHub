@@ -22,4 +22,32 @@
         id,spaceName,spaceLevel,spaceType,maxSize,maxCount,totalSize,totalCount,userId,
         createTime,editTime,updateTime,isDelete
     </sql>
+
+    <resultMap id="MySpaceResultMap" type="com.thm.pichub.model.vo.MySpaceVO">
+        <id column="id" property="id" />
+        <result column="spaceName" property="spaceName" />
+        <result column="spaceLevel" property="spaceLevel" />
+        <result column="spaceType" property="spaceType" />
+        <result column="maxSize" property="maxSize" />
+        <result column="maxCount" property="maxCount" />
+        <result column="totalSize" property="totalSize" />
+        <result column="totalCount" property="totalCount" />
+        <result column="userId" property="userId" />
+        <result column="createTime" property="createTime" />
+        <result column="editTime" property="editTime" />
+        <result column="spaceRole" property="spaceRole" />
+    </resultMap>
+
+    <!-- 查询用户的空间列表（包含用户权限） -->
+    <select id="selectMySpacesByUserId" resultMap="MySpaceResultMap">
+        SELECT
+            s.id, s.spaceName, s.spaceLevel, s.spaceType, s.maxSize, s.maxCount,
+            s.totalSize, s.totalCount, s.userId, s.createTime, s.editTime,
+            su.spaceRole
+        FROM space s
+        INNER JOIN space_user su ON s.id = su.spaceId
+        WHERE su.userId = #{userId}
+        AND s.isDelete = 0
+        ORDER BY s.createTime DESC
+    </select>
 </mapper>

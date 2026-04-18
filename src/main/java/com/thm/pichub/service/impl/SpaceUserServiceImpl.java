@@ -20,6 +20,7 @@ import com.thm.pichub.service.SpaceUserService;
 import com.thm.pichub.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,11 +36,12 @@ import java.util.stream.Collectors;
 public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser> implements SpaceUserService {
 
     @Resource
-    @org.springframework.context.annotation.Lazy
+    @Lazy
     private SpaceService spaceService;
 
     @Resource
     private UserService userService;
+
 
     @Override
     public long addSpaceUser(SpaceUserAddRequest spaceUserAddRequest, HttpServletRequest request) {
@@ -233,7 +235,7 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
     }
 
     @Override
-    public boolean isSpaceAdmin(Long spaceId, Long userId) {
+    public boolean isSpacePermission(Long spaceId, Long userId) {
         if (spaceId == null || userId == null) {
             return false;
         }
@@ -250,8 +252,18 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
         queryWrapper.eq("userId", userId);
         SpaceUser spaceUser = this.baseMapper.selectOne(queryWrapper);
 
-        return spaceUser != null && "admin".equals(spaceUser.getSpaceRole());
+        return spaceUser != null &&( "admin".equals(spaceUser.getSpaceRole()) || "editor".equals(spaceUser.getSpaceRole()));
     }
+
+    @Override
+    public String SpacePermission(Long spaceId, Long userId) {
+        QueryWrapper<SpaceUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("spaceId", spaceId);
+        queryWrapper.eq("userId", userId);
+        SpaceUser spaceUser = this.baseMapper.selectOne(queryWrapper);
+        return spaceUser.getSpaceRole();
+    }
+
 
     private SpaceUserVO getSpaceUserVO(SpaceUser spaceUser) {
         if (spaceUser == null) {

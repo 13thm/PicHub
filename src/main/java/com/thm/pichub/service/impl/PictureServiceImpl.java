@@ -1,5 +1,6 @@
 package com.thm.pichub.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONUtil;
@@ -8,18 +9,22 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.thm.pichub.common.DeleteRequest;
 import com.thm.pichub.common.constant.UserConstant;
 import com.thm.pichub.common.exception.BusinessException;
 import com.thm.pichub.common.exception.ErrorCode;
 import com.thm.pichub.common.utils.MinioUtil;
 import com.thm.pichub.common.utils.MultiLevelCacheUtil;
 import com.thm.pichub.mapper.PictureMapper;
+import com.thm.pichub.model.entity.Space;
 import com.thm.pichub.model.dto.picture.PictureQueryRequest;
 import com.thm.pichub.model.dto.picture.PictureUpdateRequest;
 import com.thm.pichub.model.entity.Picture;
 import com.thm.pichub.model.entity.User;
 import com.thm.pichub.model.vo.picture.PictureVO;
 import com.thm.pichub.service.PictureService;
+import com.thm.pichub.service.SpaceService;
+import com.thm.pichub.service.SpaceUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -51,8 +56,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     private final MinioUtil minioUtil;
     @Resource
     private MultiLevelCacheUtil multiLevelCacheUtil;
+    @Resource
+    private SpaceService spaceService;
+    @Resource
+    private SpaceUserService spaceUserService;
     @Override
-    public Long uploadPicture(MultipartFile file, String name, String introduction, String category, String tags, HttpServletRequest request) {
+    public Long uploadPicture(MultipartFile file, String name, String introduction, String category, String tags, Long spaceId, HttpServletRequest request) {
         // 1. 获取当前登录用户
         User loginUser = (User) request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
         if (loginUser == null) {
@@ -65,15 +74,42 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件为空");
         }
 
-        // 3. 上传到MinIO
+        // 3. 如果传入了空间ID，需要校验空间容量和权限
+        Space space = null;
+        if (spaceId != null) {
+            // 3.1 查询空间是否存在
+            space = spaceService.getById(spaceId);
+            if (space == null) {
+                throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "空间不存在");
+            }
+
+            // 3.2 校验用户是否是有上传的权限
+            boolean hasPermission = spaceUserService.isSpacePermission(spaceId, userId);
+            if (!hasPermission && !userId.equals(space.getUserId())) {
+                throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权上传到此空间");
+            }
+
+            // 3.3 检查空间容量
+            long picSize = file.getSize();
+            // 检查大小
+            if (space.getTotalSize() + picSize > space.getMaxSize()) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "空间容量不足，无法上传");
+            }
+            // 检查数量
+            if (space.getTotalCount() + 1 > space.getMaxCount()) {
+                throw new BusinessException(ErrorCode.PARAMS_ERROR, "空间图片数量已达上限");
+            }
+        }
+
+        // 4. 上传到MinIO
         String fileName = minioUtil.uploadFile(file);
         String fileUrl = minioUtil.getFileUrl(fileName);
 
-        // 4. 计算图片属性
+        // 5. 计算图片属性
         long picSize = file.getSize();
         String picFormat = file.getContentType().split("/")[1];
 
-        // 5. 保存到数据库
+        // 6. 保存到数据库
         Picture picture = new Picture();
         picture.setUrl(fileUrl);
         picture.setName(name);
@@ -82,8 +118,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         picture.setTags(tags);
         picture.setPicSize(picSize);
         picture.setPicFormat(picFormat);
-        picture.setReviewStatus(0); // 默认待审核
+        picture.setReviewStatus("admin".equals(loginUser.getUserRole())?1:0);
         picture.setUserId(userId);
+        picture.setSpaceId(spaceId); // 设置空间ID
         picture.setCreateTime(new Date());
         picture.setEditTime(new Date());
         picture.setIsDelete(0);
@@ -94,6 +131,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
             minioUtil.deleteFile(fileName);
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "图片上传失败");
         }
+
+        // 7. 如果是空间图片，更新空间的统计信息
+        if (spaceId != null && space != null) {
+            space.setTotalSize(space.getTotalSize() + picSize);
+            space.setTotalCount(space.getTotalCount() + 1L);
+            spaceService.updateById(space);
+        }
+
         return picture.getId();
     }
 
@@ -157,7 +202,9 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     }
 
     @Override
-    public boolean deletePicture(Long pictureId, HttpServletRequest request) {
+    public boolean deletePicture(DeleteRequest deleteRequest, HttpServletRequest request) {
+        Long pictureId = deleteRequest.getId();
+        Long spaceId = deleteRequest.getSpaceId();
         // 1. 校验参数
         if (pictureId == null || pictureId <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -174,9 +221,21 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         if (loginUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
-        if (!loginUser.getId().equals(picture.getUserId()) && !"admin".equals(loginUser.getUserRole())) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无删除权限");
+        if (spaceId!=null){
+            // 判断权限
+            if (!spaceUserService.isSpacePermission(spaceId, loginUser.getId())) {
+                throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无删除权限");
+            }
+            Space spaceById = spaceService.getSpaceById(spaceId);
+            spaceById.setTotalCount(spaceById.getTotalCount()-1);
+            spaceById.setTotalSize(spaceById.getTotalSize()-picture.getPicSize());
+            spaceService.updateById(spaceById);
+        }else {
+            if (!loginUser.getId().equals(picture.getUserId()) && !"admin".equals(loginUser.getUserRole())) {
+                throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无删除权限");
+            }
         }
+
 
         // 4. 删除 MinIO 文件
         String fileName = extractFileNameFromUrl(picture.getUrl());
@@ -242,6 +301,7 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         Integer reviewStatus = pictureQueryRequest.getReviewStatus();
         String sortField = pictureQueryRequest.getSortField();
         String sortOrder = pictureQueryRequest.getSortOrder();
+        Long spaceId = pictureQueryRequest.getSpaceId();
 
         // 模糊查询
         if (StringUtils.isNotBlank(name)) {
@@ -265,6 +325,14 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
                     .or().like("category", searchField)
                     .or().like("tags", searchField)
                     .or().like("introduction", searchField);
+        }
+        // 为空 是广场的图片，不为空是空间图片
+        if (spaceId != null) {
+            // 如果传入了 spaceId，就使用等于查询
+            queryWrapper.eq("spaceId", spaceId);
+        } else {
+            // 如果没有传入 spaceId，就使用 IS NULL 查询
+            queryWrapper.isNull("spaceId");
         }
         // 排序
         queryWrapper.orderBy(StrUtil.isNotEmpty(sortField), StrUtil.equals(sortOrder, "ascend"), sortField);

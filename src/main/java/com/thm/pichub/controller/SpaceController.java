@@ -10,6 +10,7 @@ import com.thm.pichub.model.dto.space.SpaceAddRequest;
 import com.thm.pichub.model.dto.space.SpaceQueryRequest;
 import com.thm.pichub.model.dto.space.SpaceUpdateRequest;
 import com.thm.pichub.model.entity.Space;
+import com.thm.pichub.model.vo.MySpaceVO;
 import com.thm.pichub.model.vo.SpaceVO;
 import com.thm.pichub.service.SpaceService;
 import com.thm.pichub.service.UserService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 空间接口
@@ -96,5 +98,14 @@ public class SpaceController {
         }
         Page<SpaceVO> spaceVOPage = spaceService.listSpaceVOByPage(spaceQueryRequest, request);
         return ResultUtils.success(spaceVOPage);
+    }
+
+    /**
+     * 获取用户加入的空间列表（包含权限信息）
+     */
+    @GetMapping("/list/my")
+    public BaseResponse<List<MySpaceVO>> listMySpaces(HttpServletRequest request) {
+        List<MySpaceVO> spaceList = spaceService.listMySpaces(request);
+        return ResultUtils.success(spaceList);
     }
 }

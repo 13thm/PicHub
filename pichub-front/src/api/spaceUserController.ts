@@ -81,6 +81,21 @@ export async function listSpaceUserVoByPageUsingPost(
   );
 }
 
+/** isSpacePermission GET /api/spaceUser/SpacePermission */
+export async function isSpacePermissionUsingGet(
+  // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
+  params: API.isSpacePermissionUsingGETParams,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseString_>("/api/spaceUser/SpacePermission", {
+    method: "GET",
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  });
+}
+
 /** updateSpaceUser POST /api/spaceUser/update */
 export async function updateSpaceUserUsingPost(
   body: API.SpaceUserUpdateRequest,

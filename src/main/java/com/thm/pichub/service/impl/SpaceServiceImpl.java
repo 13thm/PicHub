@@ -13,6 +13,7 @@ import com.thm.pichub.model.dto.space.SpaceQueryRequest;
 import com.thm.pichub.model.dto.space.SpaceUpdateRequest;
 import com.thm.pichub.model.entity.Space;
 import com.thm.pichub.model.entity.SpaceUser;
+import com.thm.pichub.model.vo.MySpaceVO;
 import com.thm.pichub.model.vo.SpaceVO;
 import com.thm.pichub.model.vo.user.LoginUserVO;
 import com.thm.pichub.service.SpaceService;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -213,5 +215,15 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
         SpaceVO spaceVO = new SpaceVO();
         BeanUtils.copyProperties(space, spaceVO);
         return spaceVO;
+    }
+
+    @Override
+    public List<MySpaceVO> listMySpaces(HttpServletRequest request) {
+        // 获取当前登录用户
+        LoginUserVO loginUser = userService.getLoginUser(request);
+        Long userId = loginUser.getId();
+
+        // 使用联合查询获取用户的空间列表（包含权限信息）
+        return baseMapper.selectMySpacesByUserId(userId);
     }
 }

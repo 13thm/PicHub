@@ -95,4 +95,12 @@ public class SpaceUserController {
         Page<SpaceUserVO> spaceUserVOPage = spaceUserService.listSpaceUserVOByPage(spaceUserQueryRequest);
         return ResultUtils.success(spaceUserVOPage);
     }
+
+    /**
+     * 判断用户的权限
+     */
+    @GetMapping("/SpacePermission")
+    public BaseResponse<String> isSpacePermission(Long spaceId, Long userId) {
+        return ResultUtils.success(spaceUserService.SpacePermission(spaceId, userId));
+    }
 }

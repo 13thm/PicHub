@@ -11,9 +11,13 @@ public class PictureUploadByBatchRequest {
      */
     private String search;
 
-    /**  
+    /**
      * 获取的url列表
-     */  
+     */
     private List<String> urls;
 
+    /**
+     * 空间ID
+     */
+    private Long spaceId;
 }

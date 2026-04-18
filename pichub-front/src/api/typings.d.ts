@@ -11,6 +11,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseListMySpaceVO_ = {
+    code?: number;
+    data?: MySpaceVO[];
+    message?: string;
+  };
+
   type BaseResponseListString_ = {
     code?: number;
     data?: string[];
@@ -77,6 +83,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseString_ = {
+    code?: number;
+    data?: string;
+    message?: string;
+  };
+
   type BaseResponseUser_ = {
     code?: number;
     data?: User;
@@ -96,6 +108,7 @@ declare namespace API {
 
   type DeleteRequest = {
     id?: number;
+    spaceId?: number;
   };
 
   type downloadPictureUsingGETParams = {
@@ -133,6 +146,13 @@ declare namespace API {
     id: number;
   };
 
+  type isSpacePermissionUsingGETParams = {
+    /** spaceId */
+    spaceId?: number;
+    /** userId */
+    userId?: number;
+  };
+
   type LoginUserVO = {
     createTime?: string;
     id?: number;
@@ -141,6 +161,21 @@ declare namespace API {
     userName?: string;
     userProfile?: string;
     userRole?: string;
+  };
+
+  type MySpaceVO = {
+    createTime?: string;
+    editTime?: string;
+    id?: number;
+    maxCount?: number;
+    maxSize?: number;
+    spaceLevel?: number;
+    spaceName?: string;
+    spaceRole?: string;
+    spaceType?: number;
+    totalCount?: number;
+    totalSize?: number;
+    userId?: number;
   };
 
   type OrderItem = {
@@ -209,6 +244,7 @@ declare namespace API {
     searchField?: string;
     sortField?: string;
     sortOrder?: string;
+    spaceId?: number;
     tags?: string;
     userId?: number;
   };
@@ -225,6 +261,7 @@ declare namespace API {
 
   type PictureUploadByBatchRequest = {
     search?: string;
+    spaceId?: number;
     urls?: string[];
   };
 
@@ -356,6 +393,8 @@ declare namespace API {
     introduction?: string;
     /** name */
     name: string;
+    /** spaceId */
+    spaceId?: number;
     /** tags */
     tags?: string;
     /** url */
@@ -369,6 +408,8 @@ declare namespace API {
     introduction?: string;
     /** name */
     name: string;
+    /** spaceId */
+    spaceId?: number;
     /** tags */
     tags?: string;
   };

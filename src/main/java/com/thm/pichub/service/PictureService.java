@@ -3,6 +3,7 @@ package com.thm.pichub.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.thm.pichub.common.DeleteRequest;
 import com.thm.pichub.model.dto.picture.PictureQueryRequest;
 import com.thm.pichub.model.dto.picture.PictureUpdateRequest;
 import com.thm.pichub.model.dto.picture.PictureUploadByBatchRequest;
@@ -23,7 +24,7 @@ public interface PictureService extends IService<Picture> {
     /**
      * 上传图片
      */
-    Long uploadPicture(MultipartFile file, String name, String introduction, String category, String tags, HttpServletRequest request);
+    Long uploadPicture(MultipartFile file, String name, String introduction, String category, String tags, Long spaceId, HttpServletRequest request);
 
     /**
      * 下载图片
@@ -38,7 +39,7 @@ public interface PictureService extends IService<Picture> {
     /**
      * 删除图片
      */
-    boolean deletePicture(Long pictureId, HttpServletRequest request);
+    boolean deletePicture(DeleteRequest deleteRequest, HttpServletRequest request);
 
     /**
      * 首页获取图片列表-有缓存（分页）
