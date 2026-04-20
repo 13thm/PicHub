@@ -1382,6 +1382,28 @@
   border-color: var(--border-hover);
 }
 
+.detail-actions .edit-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: var(--accent-blue);
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.detail-actions .edit-btn:hover {
+  background: var(--accent-blue-hover);
+  box-shadow: var(--shadow-md);
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

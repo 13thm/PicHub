@@ -1,87 +1,205 @@
 package com.thm.pichub.websocket;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 
 /**
  * WebSocket 消息实体类
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class WsMessage implements Serializable {
 
-    /**
-     * 消息类型
-     * JOIN: 用户加入频道
-     * LEAVE: 用户离开频道
-     * START_EDIT: 开始编辑
-     * ROTATE: 旋转同步
-     * SAVE: 保存成功
-     * REJECT: 编辑被拒绝
-     * AUTO_UNLOCK: 异常断开解锁
-     */
     private String type;
-
-    /**
-     * 用户ID
-     */
     private Long userId;
-
-    /**
-     * 用户名
-     */
     private String userName;
-
-    /**
-     * 图片ID
-     */
     private Long imageId;
-
-    /**
-     * 旋转角度: 0, 90, 180, 270
-     */
     private Integer angle;
-
-    /**
-     * 消息内容
-     */
     private String message;
+    private Long timestamp;
+    private List<UserInfo> userList;
+
+    // 默认构造器用于反序列化
+    public WsMessage() {}
+
+    // Builder 构造器
+    private WsMessage(Builder builder) {
+        this.type = builder.type;
+        this.userId = builder.userId;
+        this.userName = builder.userName;
+        this.imageId = builder.imageId;
+        this.angle = builder.angle;
+        this.message = builder.message;
+        this.timestamp = builder.timestamp;
+        this.userList = builder.userList;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    // Getters 和 Setters
+    public String getType() { return type; }
+    public WsMessage setType(String type) { this.type = type; return this; }
+
+    public Long getUserId() { return userId; }
+    public WsMessage setUserId(Long userId) { this.userId = userId; return this; }
+
+    public String getUserName() { return userName; }
+    public WsMessage setUserName(String userName) { this.userName = userName; return this; }
+
+    public Long getImageId() { return imageId; }
+    public WsMessage setImageId(Long imageId) { this.imageId = imageId; return this; }
+
+    public Integer getAngle() { return angle; }
+    public WsMessage setAngle(Integer angle) { this.angle = angle; return this; }
+
+    public String getMessage() { return message; }
+    public WsMessage setMessage(String message) { this.message = message; return this; }
+
+    public Long getTimestamp() { return timestamp; }
+    public WsMessage setTimestamp(Long timestamp) { this.timestamp = timestamp; return this; }
+
+    public List<UserInfo> getUserList() { return userList; }
+    public WsMessage setUserList(List<UserInfo> userList) { this.userList = userList; return this; }
+
+    // Builder 内部类
+    public static class Builder {
+        private String type;
+        private Long userId;
+        private String userName;
+        private Long imageId;
+        private Integer angle;
+        private String message;
+        private Long timestamp;
+        private List<UserInfo> userList;
+
+        public Builder type(String type) { this.type = type; return this; }
+        public Builder userId(Long userId) { this.userId = userId; return this; }
+        public Builder userName(String userName) { this.userName = userName; return this; }
+        public Builder imageId(Long imageId) { this.imageId = imageId; return this; }
+        public Builder angle(Integer angle) { this.angle = angle; return this; }
+        public Builder message(String message) { this.message = message; return this; }
+        public Builder timestamp(Long timestamp) { this.timestamp = timestamp; return this; }
+        public Builder userList(List<UserInfo> userList) { this.userList = userList; return this; }
+
+        public WsMessage build() {
+            return new WsMessage(this);
+        }
+    }
 
     /**
-     * 时间戳
+     * 用户信息内部类
      */
-    private Long timestamp;
+    public static class UserInfo {
+        private Long id;
+        private String name;
+        private Boolean isEditor;
+        private Boolean isMe;
 
+        public UserInfo() {}
+
+        public UserInfo(Long id, String name, Boolean isEditor, Boolean isMe) {
+            this.id = id;
+            this.name = name;
+            this.isEditor = isEditor;
+            this.isMe = isMe;
+        }
+
+        public Long getId() { return id; }
+        public UserInfo setId(Long id) { this.id = id; return this; }
+
+        public String getName() { return name; }
+        public UserInfo setName(String name) { this.name = name; return this; }
+
+        public Boolean getIsEditor() { return isEditor; }
+        public UserInfo setIsEditor(Boolean isEditor) { this.isEditor = isEditor; return this; }
+
+        public Boolean getIsMe() { return isMe; }
+        public UserInfo setIsMe(Boolean isMe) { this.isMe = isMe; return this; }
+    }
+
+    // 工厂方法
     public static WsMessage join(Long userId, String userName, Long imageId) {
-        return new WsMessage("JOIN", userId, userName, imageId, null, "用户加入", System.currentTimeMillis());
+        return builder()
+                .type("JOIN")
+                .userId(userId)
+                .userName(userName)
+                .imageId(imageId)
+                .message("用户加入")
+                .timestamp(System.currentTimeMillis())
+                .build();
     }
 
     public static WsMessage leave(Long userId, String userName, Long imageId) {
-        return new WsMessage("LEAVE", userId, userName, imageId, null, "用户离开", System.currentTimeMillis());
+        return builder()
+                .type("LEAVE")
+                .userId(userId)
+                .userName(userName)
+                .imageId(imageId)
+                .message("用户离开")
+                .timestamp(System.currentTimeMillis())
+                .build();
     }
 
     public static WsMessage startEdit(Long userId, String userName, Long imageId) {
-        return new WsMessage("START_EDIT", userId, userName, imageId, null, "用户开始编辑", System.currentTimeMillis());
+        return builder()
+                .type("START_EDIT")
+                .userId(userId)
+                .userName(userName)
+                .imageId(imageId)
+                .message("用户开始编辑")
+                .timestamp(System.currentTimeMillis())
+                .build();
     }
 
-    public static WsMessage rotate(Long imageId, Integer angle) {
-        return new WsMessage("ROTATE", null, null, imageId, angle, "图片旋转同步", System.currentTimeMillis());
+    public static WsMessage rotate(Long userId, String userName, Long imageId, Integer angle) {
+        return builder()
+                .type("ROTATE")
+                .userId(userId)
+                .userName(userName)
+                .imageId(imageId)
+                .angle(angle)
+                .message("图片旋转同步")
+                .timestamp(System.currentTimeMillis())
+                .build();
     }
 
     public static WsMessage save(Long userId, String userName, Long imageId) {
-        return new WsMessage("SAVE", userId, userName, imageId, null, "图片保存成功", System.currentTimeMillis());
+        return builder()
+                .type("SAVE")
+                .userId(userId)
+                .userName(userName)
+                .imageId(imageId)
+                .message("图片保存成功")
+                .timestamp(System.currentTimeMillis())
+                .build();
     }
 
     public static WsMessage reject(Long imageId) {
-        return new WsMessage("REJECT", null, null, imageId, null, "当前图片正在编辑中", System.currentTimeMillis());
+        return builder()
+                .type("REJECT")
+                .imageId(imageId)
+                .message("当前图片正在编辑中")
+                .timestamp(System.currentTimeMillis())
+                .build();
     }
 
     public static WsMessage autoUnlock(Long imageId) {
-        return new WsMessage("AUTO_UNLOCK", null, null, imageId, null, "编辑者异常断开，编辑锁已释放", System.currentTimeMillis());
+        return builder()
+                .type("AUTO_UNLOCK")
+                .imageId(imageId)
+                .message("编辑者异常断开，编辑锁已释放")
+                .timestamp(System.currentTimeMillis())
+                .build();
+    }
+
+    public static WsMessage editExit(Long userId, String userName, Long imageId) {
+        return builder()
+                .type("EDIT_EXIT")
+                .userId(userId)
+                .userName(userName)
+                .imageId(imageId)
+                .message("编辑者退出编辑模式")
+                .timestamp(System.currentTimeMillis())
+                .build();
     }
 }

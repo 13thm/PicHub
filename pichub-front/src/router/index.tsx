@@ -9,6 +9,7 @@ import PictureReviewPage from "@/pages/PictureReviewPage";
 import SpaceManagePage from "@/pages/SpaceManagePage";
 import MySpacePage from "@/pages/MySpacePage";
 import SpacePicturesPage from "@/pages/SpacePicturesPage";
+import ImageEditPage from "@/pages/ImageEditPage";
 import AuthGuard from "@/components/AuthGuard";
 
 const router = createBrowserRouter([
@@ -81,6 +82,14 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <SpacePicturesPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/image-edit/:pictureId",
+    element: (
+      <AuthGuard>
+        <ImageEditPage />
       </AuthGuard>
     ),
   },

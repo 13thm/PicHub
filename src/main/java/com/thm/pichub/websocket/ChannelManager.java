@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -51,6 +51,9 @@ public class ChannelManager {
     private final Map<String, Long> sessionImages = new ConcurrentHashMap<>();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Resource
+    private EditLockManager editLockManager;
 
     /**
      * 用户加入图片频道
@@ -179,5 +182,49 @@ public class ChannelManager {
     public int getChannelOnlineCount(Long imageId) {
         Set<WebSocketSession> channel = channels.get(imageId);
         return channel != null ? channel.size() : 0;
+    }
+
+    /**
+     * 发送用户列表到指定会话
+     */
+    public void sendUserListToSession(WebSocketSession session, Long imageId) {
+        Set<WebSocketSession> channel = channels.get(imageId);
+        if (channel == null) {
+            return;
+        }
+
+        try {
+            // 获取当前编辑者信息
+            Long currentEditorId = editLockManager.getEditorId(imageId);
+            String targetSessionId = session.getId();
+            Long targetUserId = sessionUsers.get(targetSessionId);
+
+            // 构建用户列表
+            java.util.List<WsMessage.UserInfo> userList = new java.util.ArrayList<>();
+            for (WebSocketSession s : channel) {
+                String sessionId = s.getId();
+                Long userId = sessionUsers.get(sessionId);
+                String userName = sessionUserNames.get(sessionId);
+                if (userId != null && userName != null) {
+                    boolean isEditor = (currentEditorId != null && currentEditorId.equals(userId));
+                    boolean isMe = userId.equals(targetUserId);
+                    userList.add(new WsMessage.UserInfo(userId, userName, isEditor, isMe));
+                }
+            }
+
+            // 发送用户列表消息
+            WsMessage message = new WsMessage();
+            message.setType("USER_LIST");
+            message.setImageId(imageId);
+            message.setUserList(userList);
+            message.setTimestamp(System.currentTimeMillis());
+
+            String jsonMessage = objectMapper.writeValueAsString(message);
+            session.sendMessage(new TextMessage(jsonMessage));
+
+            log.info("发送用户列表到会话 {}, 图片 {}, 用户数: {}", session.getId(), imageId, userList.size());
+        } catch (Exception e) {
+            log.error("发送用户列表失败", e);
+        }
     }
 }

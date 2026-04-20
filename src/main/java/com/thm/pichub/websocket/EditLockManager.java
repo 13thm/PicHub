@@ -120,4 +120,18 @@ public class EditLockManager {
         EditLock lock = editLocks.get(imageId);
         return lock != null && lock.isEditing() && sessionId.equals(lock.getSessionId());
     }
+
+    /**
+     * 获取图片当前编辑者ID
+     *
+     * @param imageId 图片ID
+     * @return 编辑者ID，如果没有编辑者则返回null
+     */
+    public Long getEditorId(Long imageId) {
+        EditLock lock = editLocks.get(imageId);
+        if (lock != null && lock.isEditing()) {
+            return lock.getEditorId();
+        }
+        return null;
+    }
 }

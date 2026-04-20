@@ -5,6 +5,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseEditLockVO_ = {
+    code?: number;
+    data?: EditLockVO;
+    message?: string;
+  };
+
   type BaseResponseInt_ = {
     code?: number;
     data?: number;
@@ -114,6 +120,24 @@ declare namespace API {
   type downloadPictureUsingGETParams = {
     /** pictureId */
     pictureId: number;
+  };
+
+  type EditLockVO = {
+    angle?: number;
+    editing?: boolean;
+    editorId?: number;
+    editorName?: string;
+    imageId?: number;
+  };
+
+  type getCurrentAngleUsingGETParams = {
+    /** imageId */
+    imageId: number;
+  };
+
+  type getImageStatusUsingGETParams = {
+    /** imageId */
+    imageId: number;
   };
 
   type getSpaceByIdUsingGETParams = {
@@ -283,6 +307,11 @@ declare namespace API {
     id?: number;
     reviewMessage?: string;
     reviewStatus?: number;
+  };
+
+  type saveImageUsingPOSTParams = {
+    /** imageId */
+    imageId: number;
   };
 
   type Space = {

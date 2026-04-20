@@ -61,10 +61,16 @@ public class MinioUtil {
         createBucket(bucketName);
 
         // 2. 构建上传参数
+        java.util.Map<String, String> headers = new java.util.HashMap<>();
+        headers.put("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.put("Pragma", "no-cache");
+        headers.put("Expires", "0");
+
         PutObjectArgs.Builder builder = PutObjectArgs.builder()
                 .bucket(bucketName)
                 .object(fileName)
-                .stream(inputStream, fileSize, -1); // -1 表示未知部分大小，但总大小必须已知
+                .stream(inputStream, fileSize, -1) // -1 表示未知部分大小，但总大小必须已知
+                .headers(headers);
 
         // 3. 设置 Content-Type (如果有的话)
         if (contentType != null && !contentType.isEmpty()) {
@@ -99,12 +105,19 @@ public class MinioUtil {
     @SneakyThrows
     public String uploadFile(MultipartFile file, String fileName) {
         createBucket(bucketName);
+
+        java.util.Map<String, String> headers = new java.util.HashMap<>();
+        headers.put("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.put("Pragma", "no-cache");
+        headers.put("Expires", "0");
+
         minioClient.putObject(
                 PutObjectArgs.builder()
                         .bucket(bucketName)
                         .object(fileName)
                         .stream(file.getInputStream(), file.getSize(), -1)
                         .contentType(file.getContentType())
+                        .headers(headers)
                         .build()
         );
         return fileName;

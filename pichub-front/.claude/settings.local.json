@@ -6,7 +6,13 @@
       "Bash(dir /b *.md)",
       "Bash(python -c \"import os; files = [f for f in os.listdir\\('.'\\) if f.endswith\\('.md'\\)]; print\\('\\\\n'.join\\(files\\)\\)\")",
       "Bash(ls -l *.md)",
-      "Bash(awk '{print $9, $5}')"
+      "Bash(awk '{print $9, $5}')",
+      "Bash(curl:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :8080)",
+      "Bash(cd /d E:\\\\code\\\\java_code\\\\PicHub)",
+      "Bash(mvn compile:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

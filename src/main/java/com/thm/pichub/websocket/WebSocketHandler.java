@@ -2,11 +2,12 @@ package com.thm.pichub.websocket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.web.socket.*;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
+import org.springframework.web.socket.WebSocketSession;
 
-import javax.annotation.Resource;
-import java.io.IOException;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -84,6 +85,13 @@ public class WebSocketHandler implements org.springframework.web.socket.WebSocke
         log.info("收到 WebSocket 消息: sessionId={}, message={}", sessionId, payload);
 
         try {
+            // 处理心跳消息单独解析
+            if (payload != null && payload.contains("\"type\":\"ping\"")) {
+                log.debug("收到心跳消息: sessionId={}", sessionId);
+                // 心跳消息不需要响应，只保持连接
+                return;
+            }
+
             WsRequest request = objectMapper.readValue(payload, WsRequest.class);
             String action = request.getAction();
 
@@ -140,6 +148,9 @@ public class WebSocketHandler implements org.springframework.web.socket.WebSocke
 
         // 加入频道
         channelManager.joinChannel(imageId, session, userId, userName);
+
+        // 先向新加入的用户发送当前频道内的用户列表
+        channelManager.sendUserListToSession(session, imageId);
 
         // 广播用户加入消息
         WsMessage joinMessage = WsMessage.join(userId, userName, imageId);
@@ -237,7 +248,7 @@ public class WebSocketHandler implements org.springframework.web.socket.WebSocke
         channelManager.updateAngle(imageId, newAngle);
 
         // 广播旋转消息
-        WsMessage rotateMessage = WsMessage.rotate(imageId, newAngle);
+        WsMessage rotateMessage = WsMessage.rotate(userId, userName, imageId, newAngle);
         channelManager.broadcastToChannel(imageId, rotateMessage);
     }
 
