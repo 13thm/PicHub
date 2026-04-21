@@ -20,6 +20,13 @@ request.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    // 处理认证失败 (401)
+    if (error.response && error.response.status === 401) {
+      // 清除本地存储的用户信息
+      localStorage.removeItem("loginUser");
+      // 跳转到登录页
+      window.location.href = "/login";
+    }
     return Promise.reject(error);
   }
 );

@@ -10,6 +10,8 @@ import SpaceManagePage from "@/pages/SpaceManagePage";
 import MySpacePage from "@/pages/MySpacePage";
 import SpacePicturesPage from "@/pages/SpacePicturesPage";
 import ImageEditPage from "@/pages/ImageEditPage";
+import SpaceSquarePage from "@/pages/SpaceSquarePage";
+import SpaceRecruitManagePage from "@/pages/SpaceRecruitManagePage";
 import AuthGuard from "@/components/AuthGuard";
 
 const router = createBrowserRouter([
@@ -90,6 +92,22 @@ const router = createBrowserRouter([
     element: (
       <AuthGuard>
         <ImageEditPage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/space-square",
+    element: (
+      <AuthGuard>
+        <SpaceSquarePage />
+      </AuthGuard>
+    ),
+  },
+  {
+    path: "/space_recruit-manage",
+    element: (
+      <AuthGuard requireAdmin>
+        <SpaceRecruitManagePage />
       </AuthGuard>
     ),
   },

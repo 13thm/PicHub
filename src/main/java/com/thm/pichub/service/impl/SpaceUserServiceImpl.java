@@ -256,6 +256,17 @@ public class SpaceUserServiceImpl extends ServiceImpl<SpaceUserMapper, SpaceUser
     }
 
     @Override
+    public boolean isMember(Long spaceId, Long userId) {
+        if (spaceId == null || userId == null) {
+            return false;
+        }
+        return this.lambdaQuery()
+                .eq(SpaceUser::getSpaceId, spaceId)
+                .eq(SpaceUser::getUserId, userId)
+                .exists();
+    }
+
+    @Override
     public String SpacePermission(Long spaceId, Long userId) {
         QueryWrapper<SpaceUser> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("spaceId", spaceId);

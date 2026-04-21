@@ -16,6 +16,7 @@ public class WsMessage implements Serializable {
     private String message;
     private Long timestamp;
     private List<UserInfo> userList;
+    private String fileUrl;  // 文件URL，用于图片保存后广播新URL
 
     // 默认构造器用于反序列化
     public WsMessage() {}
@@ -30,6 +31,7 @@ public class WsMessage implements Serializable {
         this.message = builder.message;
         this.timestamp = builder.timestamp;
         this.userList = builder.userList;
+        this.fileUrl = builder.fileUrl;
     }
 
     public static Builder builder() {
@@ -61,6 +63,9 @@ public class WsMessage implements Serializable {
     public List<UserInfo> getUserList() { return userList; }
     public WsMessage setUserList(List<UserInfo> userList) { this.userList = userList; return this; }
 
+    public String getFileUrl() { return fileUrl; }
+    public WsMessage setFileUrl(String fileUrl) { this.fileUrl = fileUrl; return this; }
+
     // Builder 内部类
     public static class Builder {
         private String type;
@@ -71,6 +76,7 @@ public class WsMessage implements Serializable {
         private String message;
         private Long timestamp;
         private List<UserInfo> userList;
+        private String fileUrl;
 
         public Builder type(String type) { this.type = type; return this; }
         public Builder userId(Long userId) { this.userId = userId; return this; }
@@ -80,6 +86,7 @@ public class WsMessage implements Serializable {
         public Builder message(String message) { this.message = message; return this; }
         public Builder timestamp(Long timestamp) { this.timestamp = timestamp; return this; }
         public Builder userList(List<UserInfo> userList) { this.userList = userList; return this; }
+        public Builder fileUrl(String fileUrl) { this.fileUrl = fileUrl; return this; }
 
         public WsMessage build() {
             return new WsMessage(this);

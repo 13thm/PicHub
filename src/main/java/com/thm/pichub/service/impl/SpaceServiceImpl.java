@@ -68,8 +68,8 @@ public class SpaceServiceImpl extends ServiceImpl<SpaceMapper, Space> implements
 
         // 设置创建用户
         space.setUserId(loginUser.getId());
-        space.setTotalSize(INIT_TOTAL_SIZE);
-        space.setTotalCount(INIT_TOTAL_COUNT);
+        space.setMaxSize(INIT_TOTAL_SIZE);
+        space.setMaxCount(INIT_TOTAL_COUNT);
 
         boolean save = this.save(space);
         if (!save) {

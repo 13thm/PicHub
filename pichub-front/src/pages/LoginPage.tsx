@@ -15,7 +15,7 @@ export default function LoginPage() {
 
   if (loginUser && !isRedirecting) {
     if (loginUser.userRole === "admin") {
-      navigate("/user-manage", { replace: true });
+      navigate("/admin", { replace: true });
     } else {
       navigate("/home", { replace: true });
     }
@@ -59,7 +59,7 @@ export default function LoginPage() {
         // 延迟2秒跳转，让用户看到成功消息
         setTimeout(() => {
           if (userData?.userRole === "admin") {
-            navigate("/user-manage");
+            navigate("/admin");
           } else {
             navigate("/home");
           }

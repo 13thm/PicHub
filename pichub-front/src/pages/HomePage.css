@@ -736,6 +736,9 @@
 
 .spaces-list-header {
   margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .spaces-list-header h2 {
@@ -1579,4 +1582,570 @@
   .picture-image {
     height: 150px;
   }
+}
+/* 消息按钮样式 */
+.message-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.message-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+}
+
+.message-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--error);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 9px;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* 招募卡片网格 */
+.recruit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.recruit-card {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: all var(--transition-normal);
+}
+
+.recruit-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.recruit-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.recruit-space-info {
+  flex: 1;
+}
+
+.recruit-space-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.recruit-publisher {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.recruit-status {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.recruit-status.status-recruiting {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
+.recruit-status.status-full {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.recruit-status.status-closed {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+.recruit-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+}
+
+.recruit-content {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  min-height: 40px;
+}
+
+.recruit-stats {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.recruit-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recruit-stat .stat-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.recruit-stat .stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.recruit-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.apply-btn {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.apply-btn:hover:not(:disabled) {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+.apply-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 申请预览 */
+.apply-preview {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.preview-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.preview-content {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-primary);
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+}
+
+/* 申请人信息 */
+.applicant-info {
+  display: flex;
+  align-items: center;
+}
+
+.applicant-info strong {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.status-pending {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--warning-bg);
+  color: var(--warning);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-approved {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--success-bg);
+  color: var(--success);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.status-rejected {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--error-bg);
+  color: var(--error);
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.approve-btn {
+  padding: 6px 14px;
+  background: var(--success);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.approve-btn:hover {
+  background: var(--success);
+  filter: brightness(0.9);
+}
+
+.reject-btn {
+  padding: 6px 14px;
+  background: var(--error);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.reject-btn:hover {
+  background: var(--error);
+  filter: brightness(0.9);
+}
+
+.no-action {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* 操作按钮 - 招募管理 */
+.recruit-table-btn {
+  color: var(--accent-purple);
+}
+
+.recruit-table-btn:hover {
+  color: var(--accent-purple);
+  background: var(--accent-purple-light);
+}
+/* 表单输入框样式 */
+.form-input {
+  width: 100%;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 2px var(--accent-blue-light);
+}
+
+.form-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: var(--bg-hover);
+}
+
+.form-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.required {
+  color: var(--error);
+  margin-left: 4px;
+}
+
+/* 改进的按钮组样式 */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* 发布招募到广场按钮 */
+.publish-recruit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.publish-recruit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.publish-recruit-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* 空间广场 - 申请加入按钮优化 */
+.square-apply-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 15px rgba(0, 198, 251, 0.3);
+}
+
+.square-apply-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 198, 251, 0.4);
+}
+
+.square-apply-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.square-apply-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 招募管理按钮 - 文档图标 */
+.recruit-manage-table-btn {
+  color: var(--text-secondary);
+}
+
+.recruit-manage-table-btn:hover {
+  color: var(--accent-blue);
+  background: var(--accent-blue-light);
+}
+
+/* 招募管理按钮 - 加号图标 */
+.recruit-publish-table-btn {
+  color: var(--accent-green);
+}
+
+.recruit-publish-table-btn:hover {
+  color: var(--accent-green);
+  background: var(--accent-green-light);
+}
+
+/* 招募状态指示器 */
+.recruit-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.recruit-status-indicator.recruiting {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
+
+.recruit-status-indicator.full {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+}
+
+.recruit-status-indicator.closed {
+  background: linear-gradient(135deg, #757575 0%, #6b6b6b 100%);
+  color: white;
+}
+
+/* 确认/提交按钮 - 模态弹窗 */
+.confirm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 32px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.confirm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* 招募卡片进度条 */
+.recruit-progress {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+}
+
+.progress-bar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recruit-progress .progress-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.recruit-progress .progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.4s ease, background-color 0.3s ease;
+  border-radius: 4px;
+}
+
+.recruit-progress .progress-percent {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 45px;
+  text-align: right;
+}
+
+/* 覆盖旧的apply-btn样式 */
+.apply-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.apply-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }

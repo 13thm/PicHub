@@ -61,6 +61,10 @@ public interface SpaceUserService extends IService<SpaceUser> {
     boolean isSpacePermission(Long spaceId, Long userId);
 
     /**
+     * 判断用户是否存在
+     */
+    boolean isMember(Long spaceId, Long userId);
+    /**
      * 获取权限
      */
     String SpacePermission(Long spaceId, Long userId);

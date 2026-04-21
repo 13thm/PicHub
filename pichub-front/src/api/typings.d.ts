@@ -17,9 +17,27 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseIPageSpaceRecruitApplyVO_ = {
+    code?: number;
+    data?: IPageSpaceRecruitApplyVO_;
+    message?: string;
+  };
+
   type BaseResponseListMySpaceVO_ = {
     code?: number;
     data?: MySpaceVO[];
+    message?: string;
+  };
+
+  type BaseResponseListSpaceRecruitApplyVO_ = {
+    code?: number;
+    data?: SpaceRecruitApplyVO[];
+    message?: string;
+  };
+
+  type BaseResponseListSpaceRecruitVO_ = {
+    code?: number;
+    data?: SpaceRecruitVO[];
     message?: string;
   };
 
@@ -47,6 +65,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponsePageSpaceRecruitVO_ = {
+    code?: number;
+    data?: PageSpaceRecruitVO_;
+    message?: string;
+  };
+
   type BaseResponsePageSpaceUserVO_ = {
     code?: number;
     data?: PageSpaceUserVO_;
@@ -68,6 +92,24 @@ declare namespace API {
   type BaseResponseSpace_ = {
     code?: number;
     data?: Space;
+    message?: string;
+  };
+
+  type BaseResponseSpaceRecruit_ = {
+    code?: number;
+    data?: SpaceRecruit;
+    message?: string;
+  };
+
+  type BaseResponseSpaceRecruitApply_ = {
+    code?: number;
+    data?: SpaceRecruitApply;
+    message?: string;
+  };
+
+  type BaseResponseSpaceRecruitVO_ = {
+    code?: number;
+    data?: SpaceRecruitVO;
     message?: string;
   };
 
@@ -130,6 +172,11 @@ declare namespace API {
     imageId?: number;
   };
 
+  type getApplyByIdUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
   type getCurrentAngleUsingGETParams = {
     /** imageId */
     imageId: number;
@@ -138,6 +185,23 @@ declare namespace API {
   type getImageStatusUsingGETParams = {
     /** imageId */
     imageId: number;
+  };
+
+  type getPendingCountUsingGETParams = {
+    /** recruitId */
+    recruitId?: number;
+    /** spaceId */
+    spaceId?: number;
+  };
+
+  type getRecruitByIdUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type getRecruitBySpaceIdUsingGETParams = {
+    /** spaceId */
+    spaceId: number;
   };
 
   type getSpaceByIdUsingGETParams = {
@@ -168,6 +232,14 @@ declare namespace API {
   type getUserVOByIdUsingGETParams = {
     /** id */
     id: number;
+  };
+
+  type IPageSpaceRecruitApplyVO_ = {
+    current?: number;
+    pages?: number;
+    records?: SpaceRecruitApplyVO[];
+    size?: number;
+    total?: number;
   };
 
   type isSpacePermissionUsingGETParams = {
@@ -215,6 +287,19 @@ declare namespace API {
     orders?: OrderItem[];
     pages?: number;
     records?: PictureVO[];
+    searchCount?: boolean;
+    size?: number;
+    total?: number;
+  };
+
+  type PageSpaceRecruitVO_ = {
+    countId?: string;
+    current?: number;
+    maxLimit?: number;
+    optimizeCountSql?: boolean;
+    orders?: OrderItem[];
+    pages?: number;
+    records?: SpaceRecruitVO[];
     searchCount?: boolean;
     size?: number;
     total?: number;
@@ -350,6 +435,195 @@ declare namespace API {
     userId?: number;
   };
 
+  type SpaceRecruit = {
+    /** 招募介绍/要求 */
+    content?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 编辑时间 */
+    editTime?: string;
+    /** id */
+    id?: number;
+    /** 是否删除 */
+    isDelete?: number;
+    /** 最多接受人数 */
+    maxApplyCount?: number;
+    /** 招募状态：0-招募中 1-已招满 2-已关闭 */
+    recruitStatus?: number;
+    /** 空间 id */
+    spaceId?: number;
+    /** 招募标题 */
+    title?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 发布人 id（空间管理员） */
+    userId?: number;
+  };
+
+  type SpaceRecruitAddRequest = {
+    /** 招募介绍/要求 */
+    content?: string;
+    /** 最多接受人数 */
+    maxApplyCount?: number;
+    /** 空间 id */
+    spaceId: number;
+    /** 招募标题 */
+    title: string;
+  };
+
+  type SpaceRecruitApply = {
+    /** 申请理由 */
+    applyReason?: string;
+    /** 申请状态：0-待审核 1-已通过 2-已拒绝 */
+    applyStatus?: number;
+    /** 创建时间 */
+    createTime?: string;
+    /** 编辑时间 */
+    editTime?: string;
+    /** id */
+    id?: number;
+    /** 是否删除 */
+    isDelete?: number;
+    /** 招募帖子 id */
+    recruitId?: number;
+    /** 审核意见 */
+    reviewMessage?: string;
+    /** 审核时间 */
+    reviewTime?: string;
+    /** 审核人 id */
+    reviewerId?: number;
+    /** 空间 id */
+    spaceId?: number;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 申请人 id */
+    userId?: number;
+  };
+
+  type SpaceRecruitApplyAddRequest = {
+    /** 申请理由 */
+    applyReason?: string;
+    /** 招募帖子 id */
+    recruitId: number;
+  };
+
+  type SpaceRecruitApplyQueryRequest = {
+    applyStatus?: number;
+    current?: number;
+    id?: number;
+    pageSize?: number;
+    recruitId?: number;
+    sortField?: string;
+    sortOrder?: string;
+    spaceId?: number;
+    userId?: number;
+  };
+
+  type SpaceRecruitApplyReviewRequest = {
+    /** 审核状态：1-已通过 2-已拒绝 */
+    applyStatus: number;
+    /** 申请 id */
+    id: number;
+    /** 审核意见 */
+    reviewMessage?: string;
+  };
+
+  type SpaceRecruitApplyVO = {
+    /** 申请人名称 */
+    applicantName?: string;
+    /** 申请理由 */
+    applyReason?: string;
+    /** 申请状态：0-待审核 1-已通过 2-已拒绝 */
+    applyStatus?: number;
+    /** 创建时间 */
+    createTime?: string;
+    /** id */
+    id?: number;
+    /** 招募帖子 id */
+    recruitId?: number;
+    /** 招募标题 */
+    recruitTitle?: string;
+    /** 审核意见 */
+    reviewMessage?: string;
+    /** 审核时间 */
+    reviewTime?: string;
+    /** 审核人 id */
+    reviewerId?: number;
+    /** 审核人名称 */
+    reviewerName?: string;
+    /** 空间 id */
+    spaceId?: number;
+    /** 空间名称 */
+    spaceName?: string;
+    /** 申请人账号 */
+    userAccount?: string;
+    /** 申请人头像 */
+    userAvatar?: string;
+    /** 申请人 id */
+    userId?: number;
+  };
+
+  type SpaceRecruitQueryRequest = {
+    current?: number;
+    id?: number;
+    pageSize?: number;
+    recruitStatus?: number;
+    searchText?: string;
+    sortField?: string;
+    sortOrder?: string;
+    spaceId?: number;
+    title?: string;
+    userId?: number;
+  };
+
+  type SpaceRecruitUpdateRequest = {
+    /** 招募介绍/要求 */
+    content?: string;
+    /** id */
+    id: number;
+    /** 最多接受人数 */
+    maxApplyCount?: number;
+    /** 招募状态：0-招募中 1-已招满 2-已关闭 */
+    recruitStatus?: number;
+    /** 招募标题 */
+    title?: string;
+  };
+
+  type SpaceRecruitVO = {
+    /** 招募介绍/要求 */
+    content?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 编辑时间 */
+    editTime?: string;
+    /** id */
+    id?: number;
+    /** 最多接受人数 */
+    maxApplyCount?: number;
+    /** 当前待审批人数 */
+    pendingCount?: number;
+    /** 发布人账号 */
+    publisherAccount?: string;
+    /** 发布人名称 */
+    publisherName?: string;
+    /** 招募状态：0-招募中 1-已招满 2-已关闭 */
+    recruitStatus?: number;
+    /** 空间 id */
+    spaceId?: number;
+    /** 空间级别：0-普通版 1-专业版 2-旗舰版 */
+    spaceLevel?: number;
+    /** 空间名称 */
+    spaceName?: string;
+    /** 空间类型：0-私有 1-团队 */
+    spaceType?: number;
+    /** 招募标题 */
+    title?: string;
+    /** 总申请人数 */
+    totalApplyCount?: number;
+    /** 发布人 id */
+    userId?: number;
+  };
+
   type SpaceUpdateRequest = {
     id?: number;
     maxCount?: number;
@@ -413,6 +687,11 @@ declare namespace API {
     totalCount?: number;
     totalSize?: number;
     userId?: number;
+  };
+
+  type unlockEditUsingPOSTParams = {
+    /** imageId */
+    imageId: number;
   };
 
   type uploadByUrlUsingPOSTParams = {

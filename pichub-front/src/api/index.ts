@@ -5,12 +5,16 @@
 import * as imageEditController from "./imageEditController";
 import * as pictureController from "./pictureController";
 import * as spaceController from "./spaceController";
+import * as spaceRecruitController from "./spaceRecruitController";
+import * as spaceRecruitApplyController from "./spaceRecruitApplyController";
 import * as spaceUserController from "./spaceUserController";
 import * as userController from "./userController";
 export default {
   imageEditController,
   pictureController,
   spaceController,
+  spaceRecruitController,
+  spaceRecruitApplyController,
   spaceUserController,
   userController,
 };

@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(mvn compile:*)",
-      "Bash(mvn clean:*)"
+      "Bash(mvn clean:*)",
+      "Bash(npm run:*)",
+      "Bash(ls:*)"
     ]
   }
 }

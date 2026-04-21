@@ -152,12 +152,13 @@ public class ImageEditController {
             editLockManager.unlock(imageId);
             channelManager.resetAngle(imageId);
 
-            // 11. 广播保存完成消息
+            // 11. 广播保存完成消息（包含图片URL）
             WsMessage message = WsMessage.builder()
                     .type("image_saved")
                     .imageId(imageId)
                     .userId(userId)
                     .userName(loginUser.getUserName())
+                    .fileUrl(fileUrl)  // 添加图片URL
                     .timestamp(System.currentTimeMillis())
                     .build();
             channelManager.broadcastToChannel(imageId, message);

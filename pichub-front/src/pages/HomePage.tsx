@@ -86,7 +86,7 @@ export default function HomePage() {
   };
 
   const handleGoToAdmin = () => {
-    navigate("/user-manage");
+    navigate("/admin");
   };
 
   const handleSearch = () => {

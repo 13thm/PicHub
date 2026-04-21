@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thm.pichub.mapper.SpaceRecruitApplyMapper">
+
+    <resultMap id="BaseResultMap" type="com.thm.pichub.model.entity.SpaceRecruitApply">
+        <id column="id" property="id"/>
+        <result column="recruitId" property="recruitId"/>
+        <result column="spaceId" property="spaceId"/>
+        <result column="userId" property="userId"/>
+        <result column="applyReason" property="applyReason"/>
+        <result column="applyStatus" property="applyStatus"/>
+        <result column="reviewMessage" property="reviewMessage"/>
+        <result column="reviewerId" property="reviewerId"/>
+        <result column="reviewTime" property="reviewTime"/>
+        <result column="createTime" property="createTime"/>
+        <result column="editTime" property="editTime"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="isDelete" property="isDelete"/>
+    </resultMap>
+
+    <select id="selectApplyVOPage" resultType="com.thm.pichub.model.vo.SpaceRecruitApplyVO">
+        SELECT sra.id, sra.recruitId, sra.spaceId, sra.userId, sra.applyReason, sra.applyStatus,
+               sra.reviewMessage, sra.reviewerId, sra.reviewTime, sra.createTime, sra.editTime, sra.updateTime,
+               u.userAccount, u.userName AS applicantName, u.userAvatar AS userAvatar,
+               sr.title AS recruitTitle,
+               s.spaceName,
+               ru.userName AS reviewerName
+        FROM space_recruit_apply sra
+        LEFT JOIN user u ON sra.userId = u.id
+        LEFT JOIN space_recruit sr ON sra.recruitId = sr.id
+        LEFT JOIN space s ON sra.spaceId = s.id
+        LEFT JOIN user ru ON sra.reviewerId = ru.id
+        <where>
+            sra.isDelete = 0
+            <if test="recruitId != null">
+                AND sra.recruitId = #{recruitId}
+            </if>
+            <if test="spaceId != null">
+                AND sra.spaceId = #{spaceId}
+            </if>
+            <if test="userId != null">
+                AND sra.userId = #{userId}
+            </if>
+            <if test="applyStatus != null">
+                AND sra.applyStatus = #{applyStatus}
+            </if>
+        </where>
+        <if test="sortField != null and sortField != ''">
+            ORDER BY ${sortField}
+            <if test="sortOrder == 'descend'"> DESC</if>
+            <if test="sortOrder == 'ascend'"> ASC</if>
+        </if>
+        <if test="sortField == null or sortField == ''">
+            ORDER BY sra.createTime DESC
+        </if>
+    </select>
+
+    <select id="selectApplyVOById" resultType="com.thm.pichub.model.vo.SpaceRecruitApplyVO">
+        SELECT sra.id, sra.recruitId, sra.spaceId, sra.userId, sra.applyReason, sra.applyStatus,
+               sra.reviewMessage, sra.reviewerId, sra.reviewTime, sra.createTime, sra.editTime, sra.updateTime,
+               u.userAccount, u.userName AS applicantName, u.userAvatar AS userAvatar,
+               sr.title AS recruitTitle,
+               s.spaceName,
+               ru.userName AS reviewerName
+        FROM space_recruit_apply sra
+        LEFT JOIN user u ON sra.userId = u.id
+        LEFT JOIN space_recruit sr ON sra.recruitId = sr.id
+        LEFT JOIN space s ON sra.spaceId = s.id
+        LEFT JOIN user ru ON sra.reviewerId = ru.id
+        WHERE sra.id = #{id} AND sra.isDelete = 0
+    </select>
+
+    <select id="selectByUserId" resultType="com.thm.pichub.model.vo.SpaceRecruitApplyVO">
+        SELECT sra.id, sra.recruitId, sra.spaceId, sra.userId, sra.applyReason, sra.applyStatus,
+               sra.reviewMessage, sra.reviewerId, sra.reviewTime, sra.createTime, sra.editTime, sra.updateTime,
+               sr.title AS recruitTitle,
+               s.spaceName
+        FROM space_recruit_apply sra
+        LEFT JOIN space_recruit sr ON sra.recruitId = sr.id
+        LEFT JOIN space s ON sra.spaceId = s.id
+        WHERE sra.userId = #{userId} AND sra.isDelete = 0
+        ORDER BY sra.createTime DESC
+    </select>
+
+    <select id="countPendingApply" resultType="java.lang.Long">
+        SELECT COUNT(*)
+        FROM space_recruit_apply
+        WHERE isDelete = 0
+        AND applyStatus = 0
+        <if test="spaceId != null">
+            AND spaceId = #{spaceId}
+        </if>
+        <if test="recruitId != null">
+            AND recruitId = #{recruitId}
+        </if>
+    </select>
+
+</mapper>

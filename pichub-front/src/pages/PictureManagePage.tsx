@@ -135,6 +135,8 @@ export default function PictureManagePage() {
       navigate("/manage/picture-review");
     } else if (key === "spaceManage") {
       navigate("/manage/space");
+    } else if (key === "recruitManage") {
+      navigate("/space_recruit-manage");
     }
   };
 

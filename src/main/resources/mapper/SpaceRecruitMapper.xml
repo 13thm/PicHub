@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.thm.pichub.mapper.SpaceRecruitMapper">
+
+    <resultMap id="BaseResultMap" type="com.thm.pichub.model.entity.SpaceRecruit">
+        <id column="id" property="id"/>
+        <result column="spaceId" property="spaceId"/>
+        <result column="userId" property="userId"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="recruitStatus" property="recruitStatus"/>
+        <result column="maxApplyCount" property="maxApplyCount"/>
+        <result column="applyCount" property="applyCount"/>
+        <result column="createTime" property="createTime"/>
+        <result column="editTime" property="editTime"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="isDelete" property="isDelete"/>
+    </resultMap>
+
+    <select id="selectBySpaceId" resultMap="BaseResultMap">
+        SELECT id, spaceId, userId, title, content, recruitStatus, maxApplyCount,applyCount,
+               createTime, editTime, updateTime, isDelete
+        FROM space_recruit
+        WHERE spaceId = #{spaceId}
+          AND isDelete = 0
+        LIMIT 1
+    </select>
+
+    <select id="selectBySpaceIds" resultMap="BaseResultMap">
+        SELECT sr.id, sr.spaceId, sr.userId, sr.title, sr.content, sr.recruitStatus, sr.maxApplyCount,sr.applyCount
+               sr.createTime, sr.editTime, sr.updateTime, sr.isDelete,
+               s.spaceName, s.spaceLevel, s.spaceType,
+               u.userName AS publisherName, u.userAccount AS publisherAccount,
+               SUM(CASE WHEN sra.applyStatus = 0 THEN 1 ELSE 0 END) AS pendingCount,
+               COUNT(DISTINCT sra.userId) AS totalApplyCount
+        FROM space_recruit sr
+        LEFT JOIN space s ON sr.spaceId = s.id
+        LEFT JOIN user u ON sr.userId = u.id
+        LEFT JOIN space_recruit_apply sra ON sr.id = sra.recruitId AND sra.isDelete = 0
+        <where>
+            sr.isDelete = 0
+            <if test="spaceIds != null and spaceIds.size() > 0">
+                AND sr.spaceId IN
+                <foreach collection="spaceIds" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        GROUP BY sr.id
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        SELECT id, spaceId, userId, title, content, recruitStatus, maxApplyCount,applyCount,
+               createTime, editTime, updateTime, isDelete
+        FROM space_recruit
+        WHERE userId = #{userId}
+          AND isDelete = 0
+        ORDER BY createTime DESC
+    </select>
+
+</mapper>

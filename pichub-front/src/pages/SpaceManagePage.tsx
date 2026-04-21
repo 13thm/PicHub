@@ -144,6 +144,8 @@ export default function SpaceManagePage() {
       navigate("/manage/picture");
     } else if (key === "pictureReview") {
       navigate("/manage/picture-review");
+    } else if (key === "recruitManage") {
+      navigate("/space_recruit-manage");
     }
   };
 

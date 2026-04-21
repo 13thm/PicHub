@@ -111,3 +111,49 @@ create table if not exists space_user
 ) comment '空间用户关联' collate = utf8mb4_unicode_ci;
 
 
+
+-- 空间招募表（广场展示的空间招人信息）
+create table if not exists space_recruit
+(
+    id              bigint auto_increment comment 'id' primary key,
+    spaceId         bigint                                not null comment '空间 id',
+    userId          bigint                                not null comment '发布人 id（空间管理员）',
+    title           varchar(256)                          not null comment '招募标题',
+    content         text                                  null comment '招募介绍/要求',
+    recruitStatus   int         default 0                 not null comment '招募状态：0-招募中 1-已招满 2-已关闭',
+    maxApplyCount   int      default 5               not null comment '最多接受人数',
+    ApplyCount   int      default 0               not null comment '已经接受申请人数',
+    createTime      datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+    editTime        datetime    default CURRENT_TIMESTAMP not null comment '编辑时间',
+    updateTime      datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete        tinyint     default 0                 not null comment '是否删除',
+
+    index idx_spaceId (spaceId),
+    index idx_userId (userId),
+    index idx_recruitStatus (recruitStatus)
+) comment '空间招募表' collate = utf8mb4_unicode_ci;
+
+-- 招募申请表（用户通过招募帖申请加入空间）
+create table if not exists space_recruit_apply
+(
+    id              bigint auto_increment comment 'id' primary key,
+    recruitId       bigint                                not null comment '招募帖子 id',
+    spaceId         bigint                                not null comment '空间 id',
+    userId          bigint                                not null comment '申请人 id',
+    applyReason     varchar(1024)                         null comment '申请理由',
+    applyStatus     int         default 0                 not null comment '申请状态：0-待审核 1-已通过 2-已拒绝',
+    reviewMessage   varchar(512)                          null comment '审核意见',
+    reviewerId      bigint                                null comment '审核人 id',
+    reviewTime      datetime                              null comment '审核时间',
+
+    createTime      datetime    default CURRENT_TIMESTAMP not null comment '创建时间',
+    editTime        datetime    default CURRENT_TIMESTAMP not null comment '编辑时间',
+    updateTime      datetime    default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete        tinyint     default 0                 not null comment '是否删除',
+
+    unique key uk_recruitId_userId (recruitId, userId),  -- 一个人对一个招募只能申请一次
+    index idx_recruitId (recruitId),
+    index idx_spaceId (spaceId),
+    index idx_userId (userId),
+    index idx_applyStatus (applyStatus)
+) comment '招募申请表' collate = utf8mb4_unicode_ci;
