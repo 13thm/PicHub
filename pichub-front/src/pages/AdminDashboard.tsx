@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getLoginUserUsingGet, userLogoutUsingPost, listUserVoByPageUsingPost } from "@/api/userController";
+import { getLoginUserUsingGet, userLogoutUsingPost } from "@/api/userController";
+import { getStatsUsingGet } from "@/api/dashboardController";
 import { useUser } from "@/contexts/UserContext";
 import "./AdminDashboard.css";
 
@@ -97,18 +98,21 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const userRes = await listUserVoByPageUsingPost({
-        current: 1,
-        pageSize: 1,
-      });
+      const statsRes = await getStatsUsingGet();
       // @ts-ignore
-      setStats(prev => ({
-        ...prev,
-        userCount: userRes.data?.total || 0,
-        pictureCount: 0,
-        spaceSize: 0,
-        pendingReview: 0,
-      }));
+      if (statsRes.data) {
+        // @ts-ignore
+        setStats({
+          // @ts-ignore
+          userCount: statsRes.data.userCount || 0,
+          // @ts-ignore
+          pictureCount: statsRes.data.pictureCount || 0,
+          // @ts-ignore
+          spaceSize: statsRes.data.spaceSize || 0,
+          // @ts-ignore
+          pendingReview: statsRes.data.pendingReview || 0,
+        });
+      }
     } catch (error) {
       console.error("获取统计数据失败", error);
     } finally {

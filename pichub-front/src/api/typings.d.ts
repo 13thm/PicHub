@@ -5,6 +5,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseDashboardStatsVO_ = {
+    code?: number;
+    data?: DashboardStatsVO;
+    message?: string;
+  };
+
   type BaseResponseEditLockVO_ = {
     code?: number;
     data?: EditLockVO;
@@ -785,5 +791,12 @@ declare namespace API {
     userName?: string;
     userProfile?: string;
     userRole?: string;
+  };
+
+  type DashboardStatsVO = {
+    pendingReview?: number;
+    pictureCount?: number;
+    spaceSize?: number;
+    userCount?: number;
   };
 }
